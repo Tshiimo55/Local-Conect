@@ -59,6 +59,11 @@
     .nav-logo span { color: var(--cerulean); }
 
     .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-toggle { display: none; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.14); border-radius: 4px; background: transparent; color: var(--white); align-items: center; justify-content: center; cursor: pointer; }
+    .mobile-menu { display: none; position: fixed; top: 68px; left: 0; right: 0; z-index: 95; background: rgba(0,0,0,0.96); border-bottom: 1px solid rgba(0,173,239,0.15); padding: 14px 20px 18px; }
+    .mobile-menu a { display: block; padding: 12px 0; font-family: 'Raleway', sans-serif; font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.78); text-decoration: none; }
+    .mobile-menu a.nav-cta-mobile { color: var(--cerulean); }
+    body.menu-open .mobile-menu { display: block; }
     .nav-links a {
       font-family: 'Raleway', sans-serif;
       font-weight: 200;
@@ -466,11 +471,9 @@
       .auth-card { padding: 36px 20px; }
       .form-row-2 { grid-template-columns: 1fr; }
       nav { padding: 0 20px; }
-      .nav-links { display: flex; gap: 14px; overflow-x: auto; max-width: calc(100vw - 155px); scrollbar-width: none; }
-      .nav-links::-webkit-scrollbar { display: none; }
-      .nav-links a { font-size: 0.63rem; letter-spacing: 1.6px; white-space: nowrap; }
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
       .nav-logo { font-size: 1.3rem; letter-spacing: 2px; }
-      .nav-links { max-width: calc(100vw - 130px); }
     }
   </style>
 </head>
@@ -487,7 +490,16 @@
       <li><a href="Listings.html">Categories</a></li>
       <li><a href="Login.html" class="nav-cta">Sign In</a></li>
     </ul>
+    <button class="nav-toggle" type="button" aria-label="Toggle menu" onclick="toggleMenu()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
   </nav>
+  <div class="mobile-menu">
+    <a href="index.html">Home</a>
+    <a href="Listings.html">Browse</a>
+    <a href="Listings.html">Categories</a>
+    <a href="Login.html" class="nav-cta-mobile">Sign In</a>
+  </div>
 
   <main>
     <div class="auth-container">
@@ -645,6 +657,8 @@
 
   <script src="assets/localconnect.js"></script>
   <script>
+    function toggleMenu() { document.body.classList.toggle('menu-open'); }
+
     let selectedRole = 'customer';
     const registerPageMode = {
       role: 'customer',
