@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirecting...</title>
+</head>
+<body>
+  <script>
+    (function () {
+      var path = window.location.pathname;
+      var redirects = {
+        "/login.html": "/Login.html",
+        "/register.html": "/Register.html",
+        "/listings.html": "/Listings.html",
+        "/profile.html": "/Profile.html",
+        "/about.html": "/About.html",
+        "/contact.html": "/Contact.html",
+        "/privacy.html": "/Privacy.html",
+        "/terms.html": "/Terms.html",
+        "/forgot-password.html": "/Forgot-Password.html",
+        "/how-it-works.html": "/How-It-Works.html",
+        "/create-listing.html": "/Create-Listing.html",
+        "/owner-dashboard.html": "/Owner-Dashboard.html",
+        "/account.html": "/Account.html",
+        "/admin.html": "/Admin.html",
+        "/script.js": "/script.js"
+      };
+
+      var lowerPath = path.toLowerCase();
+      for (var suffix in redirects) {
+        if (lowerPath.endsWith(suffix)) {
+          var target = path.slice(0, path.length - suffix.length) + redirects[suffix];
+          if (target !== path) {
+            window.location.replace(target + window.location.search + window.location.hash);
+            return;
+          }
+        }
+      }
+
+      if (path !== "/" && !path.endsWith("/index.html")) {
+        var base = path.endsWith("/") ? path.slice(0, -1) : path.replace(/\/[^/]*$/, "");
+        window.location.replace((base || "") + "/index.html");
+      }
+    })();
+  </script>
+</body>
+</html>
