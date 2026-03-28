@@ -152,7 +152,7 @@
     <a href="index.html" class="nav-logo">Local<span>Connect</span> SA</a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
-      <li><a href="listings.html">Browse</a></li>
+      <li><a href="Listings.html">Browse</a></li>
       <li><a href="#" id="navAuthLink" onclick="logout()">Sign Out</a></li>
     </ul>
   </nav>
@@ -374,7 +374,7 @@
 
     (async function initPage() {
       session = await LocalConnect.fetchSession();
-      if (!session) { window.location.href = 'login.html'; return; }
+      if (!session) { window.location.href = 'Login.html'; return; }
       currentUser = await LocalConnect.getCurrentUser();
       initHeader();
       loadProfile();
@@ -390,7 +390,7 @@
       document.getElementById('navAuthLink').textContent = session.name.split(' ')[0];
     }
 
-    async function logout() { await LocalConnect.logout(); window.location.href = 'login.html'; }
+    async function logout() { await LocalConnect.logout(); window.location.href = 'Login.html'; }
 
     function loadProfile() {
       const parts = (currentUser.name || '').split(' ');
@@ -472,7 +472,7 @@
     function renderSaved() {
       const el = document.getElementById('savedList');
       if (!savedList.length) { el.innerHTML = '<p style="padding:20px 0;font-size:0.82rem;color:rgba(255,255,255,0.25);">No saved businesses yet. Browse and save businesses you love.</p>'; return; }
-      el.innerHTML = savedList.map((b, i) => `<a class="saved-card" href="profile.html?id=${b.id}"><div class="saved-icon">${CAT_ICONS_SMALL[b.cat] || ''}</div><div class="saved-info"><div class="saved-name">${b.name}</div><div class="saved-meta">${b.city}, ${b.province} &nbsp;|&nbsp; <span class="saved-stars">${'?'.repeat(Math.floor(b.rating))}</span> ${b.rating}</div></div><button class="btn-unsave" onclick="event.preventDefault();removeSaved(${i})" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></a>`).join('');
+      el.innerHTML = savedList.map((b, i) => `<a class="saved-card" href="Profile.html?id=${b.id}"><div class="saved-icon">${CAT_ICONS_SMALL[b.cat] || ''}</div><div class="saved-info"><div class="saved-name">${b.name}</div><div class="saved-meta">${b.city}, ${b.province} &nbsp;|&nbsp; <span class="saved-stars">${'?'.repeat(Math.floor(b.rating))}</span> ${b.rating}</div></div><button class="btn-unsave" onclick="event.preventDefault();removeSaved(${i})" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></a>`).join('');
     }
 
     function removeSaved(i) { savedList.splice(i, 1); renderSaved(); showToast('Removed from saved businesses', 'var(--danger)'); }

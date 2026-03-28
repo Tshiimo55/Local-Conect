@@ -297,9 +297,9 @@
     <a href="index.html" class="nav-logo">Local<span>Connect</span> SA</a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
-      <li><a href="listings.html">Browse</a></li>
-      <li><a href="listings.html">Categories</a></li>
-      <li><a href="login.html" class="nav-cta" id="navAuthLink">Sign In</a></li>
+      <li><a href="Listings.html">Browse</a></li>
+      <li><a href="Listings.html">Categories</a></li>
+      <li><a href="Login.html" class="nav-cta" id="navAuthLink">Sign In</a></li>
     </ul>
   </nav>
 
@@ -310,7 +310,7 @@
       <nav class="breadcrumb" aria-label="breadcrumb">
         <a href="index.html">Home</a>
         <span>›</span>
-        <a href="listings.html">Browse</a>
+        <a href="Listings.html">Browse</a>
         <span>›</span>
         <span class="current" id="breadcrumbName">Loading…</span>
       </nav>
@@ -521,7 +521,7 @@
       ].filter(Boolean).map(row => `<div class="info-row"><span class="info-icon">${row.icon}</span><div><div class="info-label">${row.label}</div><div class="info-value">${row.value}</div></div></div>`).join('');
       document.getElementById('sidebarAddress').textContent = biz.address;
       const similar = allBusinesses.filter(b => b.category === biz.category && b.id !== biz.id).slice(0, 3);
-      document.getElementById('similarList').innerHTML = similar.map(s => `<a class="similar-card" href="profile.html?id=${s.id}"><div class="similar-icon">${ICONS[s.category] || ''}</div><div><div class="similar-name">${s.name}</div><div class="similar-loc">${s.city}, ${s.province}</div><div class="similar-stars">${starsStr(s.rating)} ${s.rating.toFixed(1)}</div></div></a>`).join('') || '<p style="font-size:0.8rem;color:var(--gray-400);">No similar businesses found.</p>';
+      document.getElementById('similarList').innerHTML = similar.map(s => `<a class="similar-card" href="Profile.html?id=${s.id}"><div class="similar-icon">${ICONS[s.category] || ''}</div><div><div class="similar-name">${s.name}</div><div class="similar-loc">${s.city}, ${s.province}</div><div class="similar-stars">${starsStr(s.rating)} ${s.rating.toFixed(1)}</div></div></a>`).join('') || '<p style="font-size:0.8rem;color:var(--gray-400);">No similar businesses found.</p>';
     }
 
     async function loadReviews() {
@@ -552,7 +552,7 @@
 
     async function submitReview() {
       const session = await LocalConnect.fetchSession();
-      if (!session) { showToast('Please sign in to leave a review'); setTimeout(() => window.location.href = 'login.html', 1200); return; }
+      if (!session) { showToast('Please sign in to leave a review'); setTimeout(() => window.location.href = 'Login.html', 1200); return; }
       if (!selectedStars) { showToast('Please select a star rating'); return; }
       const text = document.getElementById('reviewText').value.trim();
       if (!text) { showToast('Please write your review'); return; }

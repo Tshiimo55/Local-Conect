@@ -740,7 +740,7 @@
     // ── Auth guard ──
     const session = JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || 'null');
     if (!session || session.role !== 'admin') {
-      window.location.href = 'login.html';
+      window.location.href = 'Login.html';
     } else {
       document.getElementById('adminName').textContent = session.name;
       document.getElementById('adminAvatar').textContent = session.name.charAt(0).toUpperCase();
@@ -749,7 +749,7 @@
     function logout() {
       localStorage.removeItem(SESSION_KEY);
       sessionStorage.removeItem(SESSION_KEY);
-      window.location.href = 'login.html';
+      window.location.href = 'Login.html';
     }
 
     // ── Panel navigation ──

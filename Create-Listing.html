@@ -372,9 +372,9 @@
   <div class="page-bg"></div>
 
   <nav>
-    <a href="Index.html" class="nav-logo">Local<span>Connect</span> SA</a>
+    <a href="index.html" class="nav-logo">Local<span>Connect</span> SA</a>
     <ul class="nav-links">
-      <li><a href="Index.html">Home</a></li>
+      <li><a href="index.html">Home</a></li>
       <li><a href="Listings.html">Browse</a></li>
       <li><a href="How-It-Works.html">How It Works</a></li>
       <li><a href="Login.html" class="nav-cta">Sign In</a></li>
@@ -383,7 +383,7 @@
 
   <main>
     <div class="back-row">
-      <a class="back-link" href="Index.html">← Back to Home</a>
+      <a class="back-link" href="index.html">← Back to Home</a>
     </div>
     <aside class="intro-card">
       <p class="eyebrow">List Your Business</p>
@@ -544,7 +544,7 @@
 
     (async function initPage() {
       const session = await LocalConnect.fetchSession();
-      if (session) window.location.href = session.role === 'business_owner' ? 'Owner-Dashboard.html' : 'Index.html';
+      if (session) window.location.href = session.role === 'business_owner' ? 'Owner-Dashboard.html' : 'index.html';
     })();
 
     function togglePw(id, btn) {

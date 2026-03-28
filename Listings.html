@@ -397,10 +397,10 @@
     <a href="index.html" class="nav-logo">Local<span>Connect</span> SA</a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
-      <li><a href="listings.html" class="active">Browse</a></li>
+      <li><a href="Listings.html" class="active">Browse</a></li>
       <li><a href="Listings.html">Categories</a></li>
       <li><a href="About.html">About</a></li>
-      <li><a href="login.html" class="nav-cta" id="navAuthLink">Sign In</a></li>
+      <li><a href="Login.html" class="nav-cta" id="navAuthLink">Sign In</a></li>
     </ul>
   </nav>
 
@@ -591,7 +591,7 @@
       }
 
       grid.innerHTML = page.map(b => `
-        <a class="biz-card" href="profile.html?id=${b.id}">
+        <a class="biz-card" href="Profile.html?id=${b.id}">
           <div class="card-top ${b.coverImage ? 'has-image' : ''}"${b.coverImage ? ` style="background-image:url('${b.coverImage}')"` : ''}>
             ${b.coverImage ? '' : (CATEGORY_ICONS[b.category] || '')}
             ${b.featured ? '<span class="badge">Featured</span>' : ''}

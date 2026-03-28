@@ -209,7 +209,7 @@
         Services & Hours
       </a>
       <p class="nav-section-label">Account</p>
-      <a class="nav-item" href="account.html">
+      <a class="nav-item" href="Account.html">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         Account Settings
       </a>
@@ -240,7 +240,7 @@
       </button>
       <span class="topbar-title" id="topbarTitle">Overview</span>
       <div class="topbar-right">
-        <a class="btn-sm btn-ghost" id="viewProfileBtn" href="profile.html?id=7" target="_blank">View Public Profile →</a>
+        <a class="btn-sm btn-ghost" id="viewProfileBtn" href="Profile.html?id=7" target="_blank">View Public Profile →</a>
         <button class="btn-sm btn-primary" onclick="showPanel('listing', document.querySelector('.nav-item:nth-child(5)'))">Edit Listing</button>
       </div>
     </div>
@@ -423,7 +423,7 @@
 
     (async function initPage() {
       session = await LocalConnect.fetchSession();
-      if (!session || session.role !== 'business_owner') { window.location.href = 'login.html'; return; }
+      if (!session || session.role !== 'business_owner') { window.location.href = 'Login.html'; return; }
       document.getElementById('ownerName').textContent = session.name;
       document.getElementById('ownerAvatar').textContent = session.name.charAt(0).toUpperCase();
       await refreshData();
@@ -434,7 +434,7 @@
       services = (business.services || []).map(s => ({ n: s.n, p: s.p }));
       hours = (business.hours || []).map(h => ({ d: h.d, open: h.open, from: h.from, to: h.to }));
       allReviews = await LocalConnect.listReviews(business.id);
-      document.getElementById('viewProfileBtn').href = `profile.html?id=${business.id}`;
+      document.getElementById('viewProfileBtn').href = `Profile.html?id=${business.id}`;
       fillListingForm();
       initOverview();
       filterOwnerReviews('');
@@ -442,7 +442,7 @@
       renderHours();
     }
 
-    async function logout() { await LocalConnect.logout(); window.location.href = 'login.html'; }
+    async function logout() { await LocalConnect.logout(); window.location.href = 'Login.html'; }
 
     function fillListingForm() {
       document.getElementById('edit-name').value = business.name || '';

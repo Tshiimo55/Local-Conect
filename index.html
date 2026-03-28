@@ -741,11 +741,11 @@
   <nav>
     <a href="index.html" class="nav-logo">Local<span>Connect</span> SA</a>
     <ul class="nav-links">
-      <li><a href="listings.html">Browse</a></li>
-      <li><a href="listings.html">Categories</a></li>
+      <li><a href="Listings.html">Browse</a></li>
+      <li><a href="Listings.html">Categories</a></li>
       <li><a href="How-It-Works.html">How It Works</a></li>
       <li><a href="About.html">About</a></li>
-      <li id="navAuthItem"><a href="login.html" class="nav-cta" id="navAuthLink">Sign In</a></li>
+      <li id="navAuthItem"><a href="Login.html" class="nav-cta" id="navAuthLink">Sign In</a></li>
     </ul>
   </nav>
 
@@ -846,7 +846,7 @@
       <h2 class="section-title">Featured Businesses</h2>
 
       <div class="biz-grid">
-        <a href="profile.html?id=1" class="biz-card" data-biz-name="Kingsmen Cuts">
+        <a href="Profile.html?id=1" class="biz-card" data-biz-name="Kingsmen Cuts">
           <div class="biz-card-top">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(0,173,239,0.5)" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"/><line x1="4" y1="3" x2="20" y2="3"/></svg>
           </div>
@@ -876,7 +876,7 @@
           </div>
         </a>
 
-        <a href="profile.html?id=3" class="biz-card" data-biz-name="Mama's Kitchen">
+        <a href="Profile.html?id=3" class="biz-card" data-biz-name="Mama's Kitchen">
           <div class="biz-card-top">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(0,173,239,0.5)" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
           </div>
@@ -1006,7 +1006,7 @@
           return business.name === card.dataset.bizName;
         });
         if (!match) return;
-        card.href = `profile.html?id=${match.id}`;
+        card.href = `Profile.html?id=${match.id}`;
         if (match.coverImage) {
           const cardTop = card.querySelector('.biz-card-top');
           if (cardTop) {
@@ -1028,7 +1028,7 @@
         navAuthLink.title = 'Click to sign out';
       } else {
         navAuthLink.textContent = 'Sign In';
-        navAuthLink.href = 'login.html';
+        navAuthLink.href = 'Login.html';
       }
     })();
   </script>
