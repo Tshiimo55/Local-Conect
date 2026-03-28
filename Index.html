@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LocalConnect SA – Find Local Businesses</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@200;300;400;500&family=Raleway:wght@100;200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cerulean: #00ADEF;
+      --black: #000000;
+      --white: #FFFFFF;
+      --cerulean-dark: #0089C4;
+      --cerulean-light: #33BEFF;
+      --cerulean-faint: rgba(0, 173, 239, 0.08);
+      --gray-100: #F5F5F5;
+      --gray-200: #E8E8E8;
+      --gray-500: #888888;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      background: var(--white);
+      color: var(--black);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,173,239,0.18);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.7rem;
+      letter-spacing: 4px;
+      color: var(--white);
+      text-decoration: none;
+      text-shadow: 0 1px 8px rgba(255,255,255,0.18);
+    }
+
+    .nav-logo span { color: var(--cerulean); }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.72rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--cerulean); }
+
+    .nav-cta {
+      background: var(--cerulean);
+      color: var(--black) !important;
+      padding: 8px 20px;
+      border-radius: 2px;
+      font-weight: 400 !important;
+      transition: background 0.2s !important;
+    }
+
+    .nav-cta:hover { background: var(--cerulean-light) !important; color: var(--black) !important; }
+
+    /* ── HERO BANNER ── */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 600px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('C:/Users/tshim/Downloads/SA banner.jpeg');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.04);
+      animation: zoomOut 12s ease forwards;
+    }
+
+    @keyframes zoomOut {
+      from { transform: scale(1.08); }
+      to   { transform: scale(1.0); }
+    }
+
+    /* Dark gradient overlay */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(0,0,0,0.82) 0%,
+        rgba(0,0,0,0.45) 50%,
+        rgba(0,173,239,0.18) 100%
+      );
+    }
+
+    /* Cerulean diagonal accent */
+    .hero-accent {
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 100%; height: 120px;
+      background: linear-gradient(to top right, var(--white) 50%, transparent 50%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 24px;
+      animation: fadeUp 1s 0.3s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.7rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--cerulean);
+      border: 1px solid var(--cerulean);
+      padding: 5px 14px;
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      line-height: 0.92;
+      color: var(--white);
+      letter-spacing: 6px;
+      margin-bottom: 24px;
+      text-shadow:
+        0 1px 0 rgba(255,255,255,0.4),
+        0 2px 12px rgba(0,173,239,0.18),
+        0 0 40px rgba(255,255,255,0.06);
+    }
+
+    .hero-title span {
+      color: var(--cerulean);
+      text-shadow:
+        0 1px 0 rgba(0,173,239,0.5),
+        0 0 24px rgba(0,173,239,0.35),
+        0 2px 16px rgba(0,173,239,0.2);
+    }
+
+    .hero-sub {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 200;
+      color: rgba(255,255,255,0.72);
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.9;
+      letter-spacing: 1px;
+    }
+
+    /* Search bar */
+    .search-bar {
+      display: flex;
+      gap: 0;
+      max-width: 580px;
+      margin: 0 auto;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 16px 24px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.92rem;
+      letter-spacing: 0.5px;
+      border: 2px solid var(--cerulean);
+      border-right: none;
+      background: rgba(255,255,255,0.96);
+      color: var(--black);
+      outline: none;
+      border-radius: 3px 0 0 3px;
+    }
+
+    .search-bar input::placeholder { color: var(--gray-500); }
+
+    .search-bar button {
+      padding: 16px 28px;
+      background: var(--cerulean);
+      color: var(--black);
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+      border-radius: 0 3px 3px 0;
+    }
+
+    .search-bar button:hover { background: var(--cerulean-light); }
+
+    /* Stats strip */
+    .stats-strip {
+      display: flex;
+      justify-content: center;
+      gap: 56px;
+      margin-top: 52px;
+      flex-wrap: wrap;
+    }
+
+    .stat { text-align: center; animation: fadeUp 1s 0.6s both; }
+
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 2.4rem;
+      color: var(--cerulean);
+      letter-spacing: 2px;
+      text-shadow: 0 0 18px rgba(0,173,239,0.4), 0 1px 0 rgba(0,173,239,0.3);
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+    }
+
+    /* ── CATEGORIES ── */
+    .section {
+      padding: 96px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.68rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--cerulean);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2.2rem, 4vw, 3.8rem);
+      letter-spacing: 3px;
+      line-height: 1;
+      color: var(--black);
+      margin-bottom: 48px;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .cat-card {
+      border: 1.5px solid var(--gray-200);
+      border-radius: 4px;
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      text-decoration: none;
+      color: var(--black);
+      background: var(--white);
+    }
+
+    .cat-card:hover {
+      border-color: var(--cerulean);
+      box-shadow: 0 4px 24px rgba(0,173,239,0.15);
+      transform: translateY(-4px);
+    }
+
+    .cat-icon {
+      width: 52px; height: 52px;
+      background: var(--cerulean-faint);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      color: var(--cerulean);
+    }
+
+    .cat-card:hover .cat-icon { background: rgba(0,173,239,0.18); }
+
+    .cat-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 300;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    .cat-count {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.65rem;
+      color: var(--gray-500);
+      letter-spacing: 1px;
+    }
+
+    /* ── FEATURED BUSINESSES ── */
+    .featured-section {
+      background: var(--black);
+      padding: 96px 48px;
+    }
+
+    .featured-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .featured-section .section-title {
+      color: var(--white);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.12), 0 2px 18px rgba(0,173,239,0.1);
+    }
+
+    .biz-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .biz-card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 6px;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+      cursor: pointer;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .biz-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--cerulean);
+    }
+
+    .biz-card-top {
+      height: 140px;
+      background: linear-gradient(135deg, #0A0A0A 0%, #1a1a1a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .biz-card-top.has-image {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .biz-card-top.has-image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.46), rgba(0,0,0,0.14));
+    }
+
+    .biz-card-top::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--cerulean);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+      transform-origin: left;
+    }
+
+    .biz-card:hover .biz-card-top::after { transform: scaleX(1); }
+
+    .biz-card-body { padding: 20px; }
+
+    .biz-category {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--cerulean);
+      margin-bottom: 6px;
+    }
+
+    .biz-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.5rem;
+      color: var(--white);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .biz-location {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 0.78rem;
+      color: #666;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .biz-stars {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stars { color: var(--cerulean); font-size: 0.85rem; }
+
+    .biz-rating {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.72rem;
+      color: #888;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      background: var(--gray-100);
+      padding: 96px 48px;
+    }
+
+    .how-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0;
+      margin-top: 56px;
+      position: relative;
+    }
+
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 36px; left: 10%; right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cerulean), var(--cerulean-dark));
+      z-index: 0;
+    }
+
+    .step {
+      text-align: center;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-num {
+      width: 72px; height: 72px;
+      background: var(--black);
+      border: 3px solid var(--cerulean);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.8rem;
+      color: var(--cerulean);
+      margin: 0 auto 20px;
+      transition: background 0.2s;
+      text-shadow: 0 0 12px rgba(0,173,239,0.3);
+    }
+
+    .step:hover .step-num { background: var(--cerulean); color: var(--black); text-shadow: none; }
+
+    .step-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.3rem;
+      letter-spacing: 3px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .step-desc {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 0.82rem;
+      color: var(--gray-500);
+      line-height: 1.9;
+    }
+
+    /* ── CTA STRIP ── */
+    .cta-strip {
+      background: var(--cerulean);
+      padding: 80px 48px;
+      text-align: center;
+      clip-path: polygon(0 12%, 100% 0, 100% 88%, 0 100%);
+      margin: -2px 0;
+    }
+
+    .cta-strip h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      color: var(--black);
+      letter-spacing: 5px;
+      margin-bottom: 16px;
+    }
+
+    .cta-strip p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      color: rgba(0,0,0,0.65);
+      margin-bottom: 36px;
+      font-size: 0.92rem;
+      letter-spacing: 0.5px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    .btn-black {
+      padding: 14px 32px;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-black:hover { background: #222; }
+
+    .btn-outline {
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--black);
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      border: 2px solid var(--black);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-outline:hover { background: var(--black); color: var(--white); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--black);
+      padding: 64px 48px 32px;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      max-width: 1200px;
+      margin: 0 auto 48px;
+    }
+
+    .footer-brand-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 2rem;
+      color: var(--white);
+      letter-spacing: 5px;
+      margin-bottom: 14px;
+    }
+
+    .footer-brand-name span { color: var(--cerulean); }
+
+    .footer-desc {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 0.82rem;
+      line-height: 1.9;
+      color: rgba(255,255,255,0.4);
+      max-width: 260px;
+      letter-spacing: 0.3px;
+    }
+
+    .footer-col h4 {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.62rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--cerulean);
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+    .footer-col a {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.82rem;
+      text-decoration: none;
+      transition: color 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .footer-col a:hover { color: var(--cerulean); }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-top: 1px solid #1a1a1a;
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-bottom p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-bottom-links {
+      display: flex; gap: 24px; list-style: none;
+    }
+
+    .footer-bottom-links a {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.75rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-bottom-links a:hover { color: var(--cerulean); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: flex; gap: 14px; overflow-x: auto; max-width: calc(100vw - 155px); scrollbar-width: none; }
+      .nav-links::-webkit-scrollbar { display: none; }
+      .nav-links a { font-size: 0.63rem; letter-spacing: 1.6px; white-space: nowrap; }
+      .hero { min-height: 720px; height: auto; padding: 120px 0 96px; }
+      .hero-title { letter-spacing: 3px; }
+      .hero-sub { margin-bottom: 28px; }
+      .search-bar { flex-direction: column; max-width: 420px; }
+      .search-bar input { border-right: 2px solid var(--cerulean); border-radius: 3px; }
+      .search-bar button { width: 100%; border-radius: 3px; }
+      .stats-strip { gap: 24px; margin-top: 36px; }
+      .section, .featured-section, .how-section { padding: 64px 20px; }
+      section[style*="padding: 96px 48px"] { padding: 64px 20px !important; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .steps-grid::before { display: none; }
+      .cta-strip { clip-path: none; }
+    }
+    @media (max-width: 560px) {
+      nav { gap: 10px; }
+      .nav-logo { font-size: 1.3rem; letter-spacing: 2px; }
+      .nav-links { max-width: calc(100vw - 130px); }
+      .hero-eyebrow { letter-spacing: 3px; }
+      .stats-strip { flex-direction: column; gap: 18px; }
+      .categories-grid { grid-template-columns: 1fr; }
+      .biz-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 12px; }
+      .footer-bottom-links { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">Local<span>Connect</span> SA</a>
+    <ul class="nav-links">
+      <li><a href="listings.html">Browse</a></li>
+      <li><a href="listings.html">Categories</a></li>
+      <li><a href="How-It-Works.html">How It Works</a></li>
+      <li><a href="About.html">About</a></li>
+      <li id="navAuthItem"><a href="login.html" class="nav-cta" id="navAuthLink">Sign In</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO BANNER -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <span class="hero-eyebrow">South Africa's Local Business Directory</span>
+      <h1 class="hero-title">
+        Find &amp; Support<br/>
+        <span>Local</span> Businesses
+      </h1>
+      <p class="hero-sub">
+        Discover trusted barbers, mechanics, tutors, restaurants and more in your community.
+      </p>
+
+      <div class="search-bar">
+        <input type="text" placeholder="Search barbers, mechanics, restaurants…"/>
+        <button>Search</button>
+      </div>
+
+      <div class="stats-strip">
+        <div class="stat">
+          <div class="stat-num">1 200+</div>
+          <div class="stat-label">Businesses Listed</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">48</div>
+          <div class="stat-label">Categories</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">9 Provinces</div>
+          <div class="stat-label">Nationwide</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-accent"></div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section style="padding: 96px 48px; max-width: 1200px; margin: 0 auto;">
+    <p class="section-label">What Are You Looking For?</p>
+    <h2 class="section-title">Browse by Category</h2>
+
+    <div class="categories-grid">
+      <a href="Listings.html?category=Barbers%20%26%20Hair%20Salons" class="cat-card">
+        <div class="cat-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"/><line x1="4" y1="3" x2="20" y2="3"/></svg>
+        </div>
+        <span class="cat-name">Barbers &amp; Hair Salons</span>
+        <span class="cat-count">214 listings</span>
+      </a>
+      <a href="Listings.html?category=Mechanics%20%26%20Auto%20Repair" class="cat-card">
+        <div class="cat-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M8.46 8.46a5 5 0 0 0 0 7.07"/></svg>
+        </div>
+        <span class="cat-name">Mechanics &amp; Auto Repair</span>
+        <span class="cat-count">187 listings</span>
+      </a>
+      <a href="Listings.html?category=Tutors%20%26%20Education" class="cat-card">
+        <div class="cat-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <span class="cat-name">Tutors &amp; Education</span>
+        <span class="cat-count">163 listings</span>
+      </a>
+      <a href="Listings.html?category=Restaurants%20%26%20Food" class="cat-card">
+        <div class="cat-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+        </div>
+        <span class="cat-name">Restaurants &amp; Food</span>
+        <span class="cat-count">309 listings</span>
+      </a>
+      <a href="Listings.html?category=Plumbers%20%26%20Electricians" class="cat-card">
+        <div class="cat-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 13 9 20 9"/><path d="M20 14.5V6l-7-4H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h7"/><line x1="16" y1="19" x2="22" y2="19"/><line x1="19" y1="16" x2="19" y2="22"/></svg>
+        </div>
+        <span class="cat-name">Plumbers &amp; Electricians</span>
+        <span class="cat-count">142 listings</span>
+      </a>
+      <a href="Listings.html?category=Beauty%20%26%20Wellness" class="cat-card">
+        <div class="cat-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <span class="cat-name">Beauty &amp; Wellness</span>
+        <span class="cat-count">198 listings</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- FEATURED BUSINESSES -->
+  <section class="featured-section">
+    <div class="featured-inner">
+      <p class="section-label" style="color: var(--cerulean)">Highly Rated Near You</p>
+      <h2 class="section-title">Featured Businesses</h2>
+
+      <div class="biz-grid">
+        <a href="profile.html?id=1" class="biz-card" data-biz-name="Kingsmen Cuts">
+          <div class="biz-card-top">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(0,173,239,0.5)" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"/><line x1="4" y1="3" x2="20" y2="3"/></svg>
+          </div>
+          <div class="biz-card-body">
+            <p class="biz-category">Barber</p>
+            <h3 class="biz-name">Kingsmen Cuts</h3>
+            <p class="biz-location">Soweto, Gauteng</p>
+            <div class="biz-stars">
+              <span class="stars">★★★★★</span>
+              <span class="biz-rating">4.9 (132 reviews)</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="Listings.html?q=ProDrive%20Mechanics&category=Mechanics%20%26%20Auto%20Repair" class="biz-card" data-biz-name="ProDrive Mechanics">
+          <div class="biz-card-top">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(0,173,239,0.5)" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          </div>
+          <div class="biz-card-body">
+            <p class="biz-category">Auto Repair</p>
+            <h3 class="biz-name">ProDrive Mechanics</h3>
+            <p class="biz-location">Mitchell's Plain, Cape Town</p>
+            <div class="biz-stars">
+              <span class="stars">★★★★★</span>
+              <span class="biz-rating">4.8 (89 reviews)</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="profile.html?id=3" class="biz-card" data-biz-name="Mama's Kitchen">
+          <div class="biz-card-top">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(0,173,239,0.5)" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+          </div>
+          <div class="biz-card-body">
+            <p class="biz-category">Restaurant</p>
+            <h3 class="biz-name">Mama's Kitchen</h3>
+            <p class="biz-location">Umlazi, Durban</p>
+            <div class="biz-stars">
+              <span class="stars">★★★★☆</span>
+              <span class="biz-rating">4.6 (207 reviews)</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section">
+    <div class="how-inner">
+      <p class="section-label">Simple. Fast. Free.</p>
+      <h2 class="section-title">How It Works</h2>
+
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3 class="step-title">Search</h3>
+          <p class="step-desc">Type a service or category and your location to find nearby businesses instantly.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3 class="step-title">Browse</h3>
+          <p class="step-desc">Compare profiles, read genuine customer reviews, and check contact details.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3 class="step-title">Connect</h3>
+          <p class="step-desc">Reach out directly to the business and get the service you need.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h3 class="step-title">Review</h3>
+          <p class="step-desc">Share your experience to help others in your community make great choices.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA STRIP -->
+  <section class="cta-strip">
+    <h2>Own a Local Business?</h2>
+    <p>Get discovered by thousands of customers in your community — listing is free.</p>
+    <div class="btn-row">
+      <a href="Create-Listing.html" class="btn-black">Create a Free Listing</a>
+      <a href="About.html" class="btn-outline">Learn More</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">Local<span>Connect</span> SA</div>
+        <p class="footer-desc">Connecting South African communities with trusted local businesses since 2025.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="Listings.html">All Categories</a></li>
+          <li><a href="Listings.html">Top Rated</a></li>
+          <li><a href="Listings.html">Recently Added</a></li>
+          <li><a href="Listings.html">Near Me</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Business</h4>
+        <ul>
+          <li><a href="Create-Listing.html">Add Listing</a></li>
+          <li><a href="Login.html">Business Login</a></li>
+          <li><a href="About.html">Pricing</a></li>
+          <li><a href="Contact.html">Advertise</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="About.html">About Us</a></li>
+          <li><a href="Contact.html">Contact</a></li>
+          <li><a href="Privacy.html">Privacy Policy</a></li>
+          <li><a href="Terms.html">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 LocalConnect SA. All rights reserved.</p>
+      <ul class="footer-bottom-links">
+        <li><a href="Privacy.html">Privacy</a></li>
+        <li><a href="Terms.html">Terms</a></li>
+        <li><a href="Privacy.html">Cookies</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="assets/localconnect.js"></script>
+  <script>
+    function goToListingsSearch() {
+      const input = document.getElementById('homeSearchInput');
+      const q = input ? input.value.trim() : '';
+      const target = q ? `Listings.html?q=${encodeURIComponent(q)}` : 'Listings.html';
+      window.location.href = target;
+    }
+
+    const homeSearchInput = document.getElementById('homeSearchInput');
+    if (homeSearchInput) {
+      homeSearchInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') goToListingsSearch();
+      });
+    }
+
+    (async function initNav() {
+      const session = await LocalConnect.fetchSession();
+      const navAuthLink = document.getElementById('navAuthLink');
+      const businesses = await LocalConnect.listBusinesses();
+      document.querySelectorAll('[data-biz-name]').forEach(function(card) {
+        const match = businesses.find(function(business) {
+          return business.name === card.dataset.bizName;
+        });
+        if (!match) return;
+        card.href = `profile.html?id=${match.id}`;
+        if (match.coverImage) {
+          const cardTop = card.querySelector('.biz-card-top');
+          if (cardTop) {
+            cardTop.classList.add('has-image');
+            cardTop.style.backgroundImage = `url('${match.coverImage}')`;
+            cardTop.innerHTML = '';
+          }
+        }
+      });
+
+      if (session) {
+        navAuthLink.textContent = session.name.split(' ')[0];
+        navAuthLink.href = '#';
+        navAuthLink.addEventListener('click', async function(e) {
+          e.preventDefault();
+          await LocalConnect.logout();
+          window.location.reload();
+        });
+        navAuthLink.title = 'Click to sign out';
+      } else {
+        navAuthLink.textContent = 'Sign In';
+        navAuthLink.href = 'login.html';
+      }
+    })();
+  </script>
+</body>
+</html>

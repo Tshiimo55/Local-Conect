@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Free Listing - LocalConnect SA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@200;300;400;500&family=Raleway:wght@100;200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cerulean: #00ADEF;
+      --cerulean-light: #33BEFF;
+      --black: #000000;
+      --white: #FFFFFF;
+      --error: #ff4d4d;
+      --success: #00c47a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      background: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,173,239,0.15);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.7rem;
+      letter-spacing: 4px;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--cerulean); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.72rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+    }
+    .nav-cta {
+      background: var(--cerulean);
+      color: var(--black) !important;
+      padding: 7px 18px;
+      border-radius: 2px;
+    }
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 60% at 12% 25%, rgba(0,173,239,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 75%, rgba(0,173,239,0.05) 0%, transparent 60%),
+        var(--black);
+    }
+    .page-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(0,173,239,0.02) 40px, rgba(0,173,239,0.02) 41px);
+    }
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 110px 24px 64px;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 28px;
+    }
+    .back-row {
+      grid-column: 1 / -1;
+      margin-bottom: -8px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--cerulean); }
+    .intro-card, .form-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(0,173,239,0.18);
+      border-radius: 8px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,173,239,0.06);
+    }
+    .intro-card {
+      padding: 36px 30px;
+      align-self: start;
+      position: sticky;
+      top: 92px;
+    }
+    .eyebrow {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--cerulean);
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 2.8rem;
+      letter-spacing: 3px;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .intro-copy {
+      font-size: 0.86rem;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 22px;
+    }
+    .intro-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .intro-item {
+      padding: 14px 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.72);
+    }
+    .form-card { padding: 40px 38px; }
+    .section-title {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--cerulean);
+      margin: 18px 0 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .section-title:first-of-type { margin-top: 0; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-group { margin-bottom: 18px; }
+    .form-group.full { grid-column: 1 / -1; }
+    label {
+      display: block;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px;
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    textarea { min-height: 96px; resize: vertical; line-height: 1.6; }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--cerulean);
+      background: rgba(0,173,239,0.04);
+      box-shadow: 0 0 0 3px rgba(0,173,239,0.08);
+    }
+    .input-wrap { position: relative; }
+    .toggle-pw {
+      position: absolute;
+      right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.3);
+      cursor: pointer;
+    }
+    .pw-strength { margin-top: 8px; display: none; }
+    .pw-strength.show { display: block; }
+    .strength-bar { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
+    .strength-fill { height: 100%; width: 0; transition: width 0.3s, background 0.3s; }
+    .strength-label { font-family: 'Raleway', sans-serif; font-size: 0.62rem; color: rgba(255,255,255,0.35); }
+    .field-error {
+      display: none;
+      margin-top: 6px;
+      color: var(--error);
+      font-size: 0.72rem;
+    }
+    .field-error.show { display: block; }
+    .error-field { border-color: var(--error) !important; }
+    .terms-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 8px 0 18px;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.8rem;
+      line-height: 1.7;
+    }
+    .terms-wrap a { color: var(--cerulean); text-decoration: none; }
+    .btn-submit {
+      width: 100%;
+      padding: 15px 22px;
+      border: none;
+      border-radius: 3px;
+      background: var(--cerulean);
+      color: var(--black);
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+    }
+    .btn-submit.loading .btn-text { opacity: 0; }
+    .spinner {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(0,0,0,0.18);
+      border-top-color: var(--black);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      opacity: 0;
+    }
+    .btn-submit.loading .spinner { opacity: 1; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .alert {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+    .alert.show { display: flex; }
+    .alert-error { background: rgba(255,77,77,0.12); border: 1px solid rgba(255,77,77,0.3); color: #ffb8b8; }
+    .alert-success { background: rgba(0,196,122,0.12); border: 1px solid rgba(0,196,122,0.3); color: #b8ffe0; }
+    .auth-switch {
+      margin-top: 18px;
+      text-align: center;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.8rem;
+    }
+    .auth-switch a { color: var(--cerulean); text-decoration: none; }
+    .photo-uploader {
+      border: 1px dashed rgba(0,173,239,0.35);
+      border-radius: 4px;
+      padding: 18px;
+      background: rgba(255,255,255,0.02);
+    }
+    .photo-help {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .photo-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-photo {
+      padding: 10px 16px;
+      border: 1px solid rgba(0,173,239,0.3);
+      border-radius: 3px;
+      background: rgba(0,173,239,0.08);
+      color: var(--cerulean);
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .photo-count {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.45);
+    }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .photo-card {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+    }
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-remove {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.72);
+      color: var(--white);
+      cursor: pointer;
+      font-size: 0.95rem;
+      line-height: 1;
+    }
+    @media (max-width: 920px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: flex; gap: 14px; overflow-x: auto; max-width: calc(100vw - 155px); scrollbar-width: none; }
+      .nav-links::-webkit-scrollbar { display: none; }
+      .nav-links a { font-size: 0.63rem; letter-spacing: 1.6px; white-space: nowrap; }
+      main { grid-template-columns: 1fr; }
+      .intro-card { position: static; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .nav-logo { font-size: 1.3rem; letter-spacing: 2px; }
+      .nav-links { max-width: calc(100vw - 130px); }
+      .form-card { padding: 32px 20px; }
+      .photo-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+
+  <nav>
+    <a href="Index.html" class="nav-logo">Local<span>Connect</span> SA</a>
+    <ul class="nav-links">
+      <li><a href="Index.html">Home</a></li>
+      <li><a href="Listings.html">Browse</a></li>
+      <li><a href="How-It-Works.html">How It Works</a></li>
+      <li><a href="Login.html" class="nav-cta">Sign In</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="back-row">
+      <a class="back-link" href="Index.html">← Back to Home</a>
+    </div>
+    <aside class="intro-card">
+      <p class="eyebrow">List Your Business</p>
+      <h1>Create Free Listing</h1>
+      <p class="intro-copy">Start with your owner account and basic business details. Once you're in, you can keep editing your services, hours, description, and profile from the dashboard.</p>
+      <div class="intro-list">
+        <div class="intro-item">Free to create and publish your listing.</div>
+        <div class="intro-item">Visible in browse results and public profile pages.</div>
+        <div class="intro-item">Manage updates from your owner dashboard after signup.</div>
+      </div>
+    </aside>
+
+    <section class="form-card">
+      <div class="alert alert-error" id="alertError">
+        <span id="alertErrorMsg">Something went wrong.</span>
+      </div>
+      <div class="alert alert-success" id="alertSuccess">
+        <span id="alertSuccessMsg">Listing created. Redirecting...</span>
+      </div>
+
+      <form id="listingForm" novalidate>
+        <p class="section-title">Owner Account</p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" placeholder="Thabo"/>
+            <span class="field-error" id="firstNameError">Required.</span>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" placeholder="Nkosi"/>
+            <span class="field-error" id="lastNameError">Required.</span>
+          </div>
+          <div class="form-group full">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="you@example.com"/>
+            <span class="field-error" id="emailError">Enter a valid email address.</span>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="+27 82 000 0000"/>
+            <span class="field-error" id="phoneError">Enter a valid phone number.</span>
+          </div>
+          <div class="form-group">
+            <label for="province">Province</label>
+            <select id="province">
+              <option value="">- Select province -</option>
+              <option>Gauteng</option>
+              <option>Western Cape</option>
+              <option>KwaZulu-Natal</option>
+              <option>Eastern Cape</option>
+              <option>Limpopo</option>
+              <option>Mpumalanga</option>
+              <option>North West</option>
+              <option>Free State</option>
+              <option>Northern Cape</option>
+            </select>
+            <span class="field-error" id="provinceError">Please select your province.</span>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrap">
+              <input type="password" id="password" placeholder="Min. 8 characters" oninput="checkStrength(this.value)"/>
+              <button type="button" class="toggle-pw" onclick="togglePw('password', this)">Show</button>
+            </div>
+            <div class="pw-strength" id="pwStrength">
+              <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+              <span class="strength-label" id="strengthLabel">Strength: -</span>
+            </div>
+            <span class="field-error" id="passwordError">Password must be at least 8 characters.</span>
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <div class="input-wrap">
+              <input type="password" id="confirmPassword" placeholder="Repeat password"/>
+              <button type="button" class="toggle-pw" onclick="togglePw('confirmPassword', this)">Show</button>
+            </div>
+            <span class="field-error" id="confirmPasswordError">Passwords do not match.</span>
+          </div>
+        </div>
+
+        <p class="section-title">Business Details</p>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="businessName">Business Name</label>
+            <input type="text" id="businessName" placeholder="e.g. Kingsmen Cuts"/>
+            <span class="field-error" id="businessNameError">Required.</span>
+          </div>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category">
+              <option value="">- Select category -</option>
+              <option>Barbers &amp; Hair Salons</option>
+              <option>Mechanics &amp; Auto Repair</option>
+              <option>Tutors &amp; Education</option>
+              <option>Restaurants &amp; Food</option>
+              <option>Plumbers &amp; Electricians</option>
+              <option>Beauty &amp; Wellness</option>
+              <option>Other</option>
+            </select>
+            <span class="field-error" id="categoryError">Please select a category.</span>
+          </div>
+          <div class="form-group">
+            <label for="city">City / Area</label>
+            <input type="text" id="city" placeholder="Soweto"/>
+          </div>
+          <div class="form-group full">
+            <label for="address">Street Address</label>
+            <input type="text" id="address" placeholder="34 Vilakazi St, Soweto"/>
+          </div>
+          <div class="form-group">
+            <label for="website">Website</label>
+            <input type="text" id="website" placeholder="yourbusiness.co.za"/>
+          </div>
+          <div class="form-group">
+            <label for="tags">Tags</label>
+            <input type="text" id="tags" placeholder="Fade, Braids, Beard Trim"/>
+          </div>
+          <div class="form-group full">
+            <label for="businessDesc">Short Description</label>
+            <textarea id="businessDesc" placeholder="Tell customers what your business offers..."></textarea>
+          </div>
+        </div>
+
+        <p class="section-title">Business Photos</p>
+        <div class="photo-uploader">
+          <p class="photo-help">Add up to 6 photos so customers can see your shop, workspace, food, or services. JPG, PNG, WEBP, and GIF are supported.</p>
+          <div class="photo-actions">
+            <button type="button" class="btn-photo" onclick="document.getElementById('listingPhotos').click()">Choose Photos</button>
+            <span class="photo-count" id="listingPhotoCount">0 / 6 selected</span>
+          </div>
+          <input type="file" id="listingPhotos" accept="image/*" multiple hidden/>
+          <div class="photo-grid" id="listingPhotoGrid"></div>
+        </div>
+
+        <div class="terms-wrap">
+          <input type="checkbox" id="terms"/>
+          <span>I agree to the <a href="Terms.html">Terms of Service</a> and <a href="Privacy.html">Privacy Policy</a> of LocalConnect SA.</span>
+        </div>
+        <span class="field-error" id="termsError" style="margin-top:-10px; margin-bottom:16px;">You must accept the terms to continue.</span>
+
+        <button type="submit" class="btn-submit" id="listingBtn">
+          <span class="btn-text">Create Free Listing</span>
+          <div class="spinner"></div>
+        </button>
+      </form>
+
+      <div class="auth-switch">
+        Already have an owner account?
+        <a href="Login.html">Sign in here</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/localconnect.js"></script>
+  <script>
+    let listingImages = [];
+
+    (async function initPage() {
+      const session = await LocalConnect.fetchSession();
+      if (session) window.location.href = session.role === 'business_owner' ? 'Owner-Dashboard.html' : 'Index.html';
+    })();
+
+    function togglePw(id, btn) {
+      const input = document.getElementById(id);
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.textContent = show ? 'Hide' : 'Show';
+    }
+
+    function checkStrength(pw) {
+      const wrap = document.getElementById('pwStrength');
+      const fill = document.getElementById('strengthFill');
+      const label = document.getElementById('strengthLabel');
+      if (!pw) { wrap.classList.remove('show'); return; }
+      wrap.classList.add('show');
+      let score = 0;
+      if (pw.length >= 8) score++;
+      if (pw.length >= 12) score++;
+      if (/[A-Z]/.test(pw)) score++;
+      if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      const levels = [
+        { pct: '20%', color: '#ff4d4d', text: 'Very Weak' },
+        { pct: '40%', color: '#ff8c42', text: 'Weak' },
+        { pct: '60%', color: '#f4c430', text: 'Fair' },
+        { pct: '80%', color: '#00ADEF', text: 'Strong' },
+        { pct: '100%', color: '#00c47a', text: 'Very Strong' }
+      ];
+      const level = levels[Math.min(score - 1, 4)] || levels[0];
+      fill.style.width = level.pct;
+      fill.style.background = level.color;
+      label.textContent = `Strength: ${level.text}`;
+      label.style.color = level.color;
+    }
+
+    function setErr(id, errId, show, msg) {
+      const el = document.getElementById(id);
+      const err = document.getElementById(errId);
+      if (msg && show) err.textContent = msg;
+      if (el) show ? el.classList.add('error-field') : el.classList.remove('error-field');
+      if (err) show ? err.classList.add('show') : err.classList.remove('show');
+    }
+
+    function showAlert(type, msg) {
+      const err = document.getElementById('alertError');
+      const ok = document.getElementById('alertSuccess');
+      err.classList.remove('show');
+      ok.classList.remove('show');
+      if (type === 'error') {
+        document.getElementById('alertErrorMsg').textContent = msg;
+        err.classList.add('show');
+      } else {
+        document.getElementById('alertSuccessMsg').textContent = msg;
+        ok.classList.add('show');
+      }
+    }
+
+    function renderListingImages() {
+      document.getElementById('listingPhotoCount').textContent = `${listingImages.length} / 6 selected`;
+      document.getElementById('listingPhotoGrid').innerHTML = listingImages.map((image, index) => `
+        <div class="photo-card">
+          <img src="${image.dataUrl}" alt="Business photo ${index + 1}"/>
+          <button type="button" class="photo-remove" onclick="removeListingImage(${index})">&times;</button>
+        </div>
+      `).join('');
+    }
+
+    function removeListingImage(index) {
+      listingImages.splice(index, 1);
+      renderListingImages();
+    }
+
+    function validate() {
+      let ok = true;
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const province = document.getElementById('province').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const businessName = document.getElementById('businessName').value.trim();
+      const category = document.getElementById('category').value;
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      const phoneOk = /^[\d\s\+\-\(\)]{7,18}$/.test(phone);
+
+      setErr('firstName', 'firstNameError', !firstName); if (!firstName) ok = false;
+      setErr('lastName', 'lastNameError', !lastName); if (!lastName) ok = false;
+      setErr('email', 'emailError', !emailOk); if (!emailOk) ok = false;
+      setErr('phone', 'phoneError', !phoneOk); if (!phoneOk) ok = false;
+      setErr('province', 'provinceError', !province); if (!province) ok = false;
+      setErr('password', 'passwordError', password.length < 8); if (password.length < 8) ok = false;
+      setErr('confirmPassword', 'confirmPasswordError', confirmPassword !== password || !confirmPassword); if (confirmPassword !== password || !confirmPassword) ok = false;
+      setErr('businessName', 'businessNameError', !businessName); if (!businessName) ok = false;
+      setErr('category', 'categoryError', !category); if (!category) ok = false;
+
+      const terms = document.getElementById('terms').checked;
+      const termsErr = document.getElementById('termsError');
+      if (!terms) { termsErr.classList.add('show'); ok = false; } else { termsErr.classList.remove('show'); }
+      return ok;
+    }
+
+    document.getElementById('listingPhotos').addEventListener('change', async function(event) {
+      const incoming = Array.from(event.target.files || []);
+      if (!incoming.length) return;
+      const available = Math.max(0, 6 - listingImages.length);
+      if (!available) {
+        showAlert('error', 'You can upload up to 6 business photos.');
+        event.target.value = '';
+        return;
+      }
+      try {
+        const selected = await LocalConnect.filesToListingImages(incoming.slice(0, available));
+        listingImages = listingImages.concat(selected);
+        renderListingImages();
+        if (incoming.length > available) {
+          showAlert('error', 'Only the first 6 photos were kept.');
+        }
+      } catch (error) {
+        showAlert('error', error.message || 'Unable to read the selected photos.');
+      }
+      event.target.value = '';
+    });
+
+    document.getElementById('listingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      document.getElementById('alertError').classList.remove('show');
+      document.getElementById('alertSuccess').classList.remove('show');
+      if (!validate()) return;
+
+      const btn = document.getElementById('listingBtn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      const payload = {
+        firstName: document.getElementById('firstName').value.trim(),
+        lastName: document.getElementById('lastName').value.trim(),
+        email: document.getElementById('email').value.trim().toLowerCase(),
+        phone: document.getElementById('phone').value.trim(),
+        province: document.getElementById('province').value,
+        password: document.getElementById('password').value,
+        role: 'business_owner',
+        businessName: document.getElementById('businessName').value.trim(),
+        category: document.getElementById('category').value,
+        city: document.getElementById('city').value.trim(),
+        address: document.getElementById('address').value.trim(),
+        website: document.getElementById('website').value.trim(),
+        tags: document.getElementById('tags').value.trim(),
+        description: document.getElementById('businessDesc').value.trim(),
+        listingImages: listingImages
+      };
+
+      setTimeout(async () => {
+        try {
+          await LocalConnect.register(payload);
+          btn.classList.remove('loading');
+          btn.disabled = false;
+          showAlert('success', 'Your free listing has been created. Redirecting to your dashboard...');
+          setTimeout(() => { window.location.href = 'Owner-Dashboard.html'; }, 1400);
+        } catch (error) {
+          btn.classList.remove('loading');
+          btn.disabled = false;
+          showAlert('error', error.message || 'Unable to create your listing right now.');
+        }
+      }, 500);
+    });
+
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+      el.addEventListener('input', () => {
+        el.classList.remove('error-field');
+        const errEl = document.getElementById(el.id + 'Error');
+        if (errEl) errEl.classList.remove('show');
+        document.getElementById('alertError').classList.remove('show');
+      });
+    });
+  </script>
+</body>
+</html>

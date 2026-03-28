@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel – LocalConnect SA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@200;300;400;500&family=Raleway:wght@100;200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cerulean: #00ADEF;
+      --cerulean-dark: #0089C4;
+      --cerulean-light: #33BEFF;
+      --black: #000000;
+      --white: #FFFFFF;
+      --surface: #0D0D0D;
+      --surface-2: #141414;
+      --surface-3: #1C1C1C;
+      --border: rgba(255,255,255,0.07);
+      --gray-400: #AAAAAA;
+      --gray-500: #777777;
+      --success: #00c47a;
+      --warning: #f4c430;
+      --danger: #ff4d4d;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      background: var(--surface);
+      color: var(--white);
+      display: flex; min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 240px; flex-shrink: 0;
+      background: var(--black);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 50;
+      transition: transform 0.3s;
+    }
+    .sidebar-open .sidebar { transform: translateX(0); }
+    .sidebar-logo {
+      padding: 28px 24px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo a {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: 1.4rem; letter-spacing: 3px;
+      color: var(--white); text-decoration: none;
+    }
+    .sidebar-logo a span { color: var(--cerulean); }
+    .sidebar-logo p {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.58rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.25); margin-top: 4px;
+    }
+
+    .sidebar-nav { flex: 1; padding: 20px 0; overflow-y: auto; }
+    .nav-section-label {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.55rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.2); padding: 12px 24px 6px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 24px; cursor: pointer;
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.78rem; letter-spacing: 1px;
+      color: rgba(255,255,255,0.45);
+      border-left: 2px solid transparent;
+      transition: all 0.15s; text-decoration: none;
+    }
+    .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.03); }
+    .nav-item.active {
+      color: var(--cerulean); border-left-color: var(--cerulean);
+      background: rgba(0,173,239,0.06);
+    }
+    .nav-item svg { flex-shrink: 0; opacity: 0.7; }
+    .nav-item.active svg { opacity: 1; }
+
+    .sidebar-footer {
+      padding: 20px 24px;
+      border-top: 1px solid var(--border);
+    }
+    .admin-badge {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .admin-avatar {
+      width: 32px; height: 32px; background: var(--cerulean);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif; font-weight: 600;
+      font-size: 0.9rem; color: var(--black); flex-shrink: 0;
+    }
+    .admin-info { flex: 1; overflow: hidden; }
+    .admin-name {
+      font-size: 0.8rem; font-weight: 400; color: var(--white);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .admin-role {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--cerulean);
+    }
+    .btn-logout {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.25); transition: color 0.2s; padding: 2px;
+    }
+    .btn-logout:hover { color: var(--danger); }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: 240px; flex: 1;
+      display: flex; flex-direction: column; min-height: 100vh;
+    }
+
+    /* Topbar */
+    .topbar {
+      height: 64px; background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 36px; position: sticky; top: 0; z-index: 40;
+    }
+    .mobile-menu-btn {
+      display: none; width: 38px; height: 38px;
+      border: 1px solid var(--border); border-radius: 4px;
+      background: transparent; color: var(--white); cursor: pointer;
+      align-items: center; justify-content: center; margin-right: 12px;
+    }
+    .topbar-title {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: 1.4rem; letter-spacing: 3px; color: var(--white);
+    }
+    .topbar-title span { color: var(--cerulean); font-size: 0.9rem; }
+    .topbar-actions { display: flex; align-items: center; gap: 16px; }
+    .topbar-search {
+      position: relative;
+    }
+    .topbar-search input {
+      padding: 8px 16px 8px 36px;
+      background: var(--surface-3); border: 1px solid var(--border);
+      border-radius: 3px; color: var(--white);
+      font-family: 'Montserrat', sans-serif; font-weight: 300;
+      font-size: 0.8rem; outline: none; width: 220px;
+      transition: border-color 0.2s;
+    }
+    .topbar-search input:focus { border-color: var(--cerulean); }
+    .topbar-search input::placeholder { color: rgba(255,255,255,0.2); }
+    .topbar-search svg {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: rgba(255,255,255,0.25); pointer-events: none;
+    }
+    .notification-btn {
+      position: relative; background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.4); transition: color 0.2s;
+      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; background: var(--surface-3);
+    }
+    .notification-btn:hover { color: var(--cerulean); }
+    .notif-dot {
+      position: absolute; top: 7px; right: 7px;
+      width: 7px; height: 7px; background: var(--cerulean); border-radius: 50%;
+    }
+
+    /* ── CONTENT ── */
+    .content { padding: 32px 36px; flex: 1; }
+
+    /* Panels shown/hidden */
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeUp 0.35s ease; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── STAT CARDS ── */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-bottom: 32px;
+    }
+    .stat-card {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 6px; padding: 24px;
+      position: relative; overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: rgba(0,173,239,0.3); }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--cerulean);
+    }
+    .stat-label {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); margin-bottom: 10px;
+    }
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: 2.4rem; letter-spacing: 2px; color: var(--white);
+      text-shadow: 0 0 20px rgba(0,173,239,0.2);
+    }
+    .stat-sub {
+      font-size: 0.72rem; font-weight: 200; color: rgba(255,255,255,0.3);
+      margin-top: 6px;
+    }
+    .stat-icon {
+      position: absolute; bottom: 16px; right: 20px;
+      color: rgba(0,173,239,0.12);
+    }
+    .stat-trend {
+      font-size: 0.7rem; font-weight: 300; margin-top: 4px;
+    }
+    .stat-trend.up { color: var(--success); }
+    .stat-trend.down { color: var(--danger); }
+
+    /* ── TABLE ── */
+    .table-card {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 6px; overflow: hidden; margin-bottom: 24px;
+    }
+    .table-header {
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    .table-title {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: 1.2rem; letter-spacing: 2px;
+    }
+    .table-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .tbl-search {
+      padding: 8px 14px; background: var(--surface-3);
+      border: 1px solid var(--border); border-radius: 3px;
+      color: var(--white); font-family: 'Montserrat', sans-serif;
+      font-weight: 300; font-size: 0.78rem; outline: none;
+      transition: border-color 0.2s; width: 180px;
+    }
+    .tbl-search:focus { border-color: var(--cerulean); }
+    .tbl-search::placeholder { color: rgba(255,255,255,0.2); }
+    .tbl-filter {
+      padding: 8px 28px 8px 12px; background: var(--surface-3);
+      border: 1px solid var(--border); border-radius: 3px;
+      color: var(--white); font-family: 'Montserrat', sans-serif;
+      font-weight: 300; font-size: 0.78rem; outline: none;
+      -webkit-appearance: none; appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+    }
+    .tbl-filter option { background: #111; }
+    .btn-sm {
+      padding: 7px 16px; border-radius: 3px; border: none; cursor: pointer;
+      font-family: 'Raleway', sans-serif; font-weight: 300;
+      font-size: 0.65rem; letter-spacing: 1.5px; text-transform: uppercase;
+      transition: all 0.15s;
+    }
+    .btn-primary { background: var(--cerulean); color: var(--black); }
+    .btn-primary:hover { background: var(--cerulean-light); }
+    .btn-danger { background: rgba(255,77,77,0.15); color: var(--danger); border: 1px solid rgba(255,77,77,0.3); }
+    .btn-danger:hover { background: rgba(255,77,77,0.25); }
+    .btn-success { background: rgba(0,196,122,0.15); color: var(--success); border: 1px solid rgba(0,196,122,0.3); }
+    .btn-success:hover { background: rgba(0,196,122,0.25); }
+    .btn-ghost { background: transparent; color: rgba(255,255,255,0.5); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--white); border-color: rgba(255,255,255,0.2); }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      padding: 12px 16px; text-align: left;
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); border-bottom: 1px solid var(--border);
+      cursor: pointer; user-select: none; white-space: nowrap;
+    }
+    thead th:hover { color: var(--cerulean); }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    tbody td {
+      padding: 13px 16px; font-size: 0.82rem; font-weight: 300;
+      color: rgba(255,255,255,0.75); vertical-align: middle;
+    }
+    .td-name { font-weight: 400; color: var(--white); }
+    .td-actions { display: flex; gap: 6px; }
+
+    /* Pill badges */
+    .pill {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .pill-active   { background: rgba(0,196,122,0.15);  color: var(--success); }
+    .pill-pending  { background: rgba(244,196,48,0.15);  color: var(--warning); }
+    .pill-inactive { background: rgba(255,77,77,0.12);   color: var(--danger);  }
+    .pill-verified { background: rgba(0,173,239,0.15);   color: var(--cerulean);}
+
+    /* Stars */
+    .tbl-stars { color: var(--cerulean); font-size: 0.75rem; }
+
+    /* ── CHART AREA ── */
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .chart-card {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 6px; padding: 24px;
+    }
+    .chart-title {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--cerulean); margin-bottom: 20px;
+    }
+    .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 100px; }
+    .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .bar {
+      width: 100%; border-radius: 2px 2px 0 0;
+      background: linear-gradient(to top, var(--cerulean-dark), var(--cerulean));
+      transition: opacity 0.2s;
+    }
+    .bar:hover { opacity: 0.8; }
+    .bar-label {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.58rem; letter-spacing: 1px; color: rgba(255,255,255,0.3);
+    }
+
+    .donut-wrap { display: flex; align-items: center; gap: 24px; }
+    .donut {
+      width: 90px; height: 90px; border-radius: 50%; flex-shrink: 0;
+      background: conic-gradient(
+        var(--cerulean) 0deg 186deg,
+        #0089C4 186deg 259deg,
+        #33BEFF 259deg 316deg,
+        #005f82 316deg 360deg
+      );
+    }
+    .donut-legend { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+    .legend-row { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 200; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* Recent activity */
+    .activity-list { display: flex; flex-direction: column; gap: 0; }
+    .activity-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+    }
+    .activity-text { font-size: 0.8rem; font-weight: 300; color: rgba(255,255,255,0.6); line-height: 1.5; }
+    .activity-text strong { color: var(--white); font-weight: 400; }
+    .activity-time {
+      margin-left: auto; flex-shrink: 0;
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.62rem; color: rgba(255,255,255,0.2); letter-spacing: 0.5px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--surface-2); border: 1px solid rgba(0,173,239,0.2);
+      border-radius: 8px; padding: 36px; width: 100%; max-width: 440px;
+      animation: fadeUp 0.25s ease;
+    }
+    .modal h3 {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: 1.4rem; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .modal p { font-size: 0.82rem; font-weight: 200; color: rgba(255,255,255,0.5); margin-bottom: 28px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 300;
+      background: var(--surface-3); border: 1px solid var(--border);
+      border-radius: 4px; padding: 14px 20px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.82rem; font-weight: 300;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      transform: translateY(80px); opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .sidebar-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 45; }
+    .sidebar-open .sidebar-backdrop { opacity: 1; pointer-events: auto; }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 48px 24px; }
+    .empty-state p { font-size: 0.85rem; font-weight: 200; color: rgba(255,255,255,0.3); }
+
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .main { margin-left: 0; }
+      .mobile-menu-btn { display: inline-flex; }
+      .topbar { padding: 0 20px; gap: 12px; }
+      .topbar-actions { gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+      .topbar-search input { width: 170px; }
+      .content { padding: 24px 20px 40px; }
+      .charts-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .topbar-title { font-size: 1.15rem; letter-spacing: 2px; }
+      .topbar-actions { width: 100%; }
+      .topbar-search { width: 100%; }
+      .topbar-search input, .tbl-search, .tbl-filter { width: 100%; }
+      .table-controls { width: 100%; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      .toast { left: 20px; right: 20px; bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <a href="index.html">Local<span>Connect</span> SA</a>
+      <p>Admin Portal</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-section-label">Overview</p>
+      <a class="nav-item active" onclick="showPanel('dashboard', this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+
+      <p class="nav-section-label">Management</p>
+      <a class="nav-item" onclick="showPanel('users', this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Users
+      </a>
+      <a class="nav-item" onclick="showPanel('businesses', this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Businesses
+      </a>
+      <a class="nav-item" onclick="showPanel('reviews', this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Reviews
+      </a>
+
+      <p class="nav-section-label">System</p>
+      <a class="nav-item" href="index.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Back to Site
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-badge">
+        <div class="admin-avatar" id="adminAvatar">A</div>
+        <div class="admin-info">
+          <div class="admin-name" id="adminName">Admin User</div>
+          <div class="admin-role">Administrator</div>
+        </div>
+        <button class="btn-logout" onclick="logout()" title="Sign out">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div>
+        <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Open admin menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="topbar-title" id="topbarTitle">Dashboard</span>
+      </div>
+      <div class="topbar-actions">
+        <div class="topbar-search">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Quick search…" id="globalSearch" oninput="globalSearchFn()"/>
+        </div>
+        <button class="notification-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ── DASHBOARD PANEL ── -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <p class="stat-label">Total Users</p>
+            <div class="stat-value" id="statUsers">—</div>
+            <p class="stat-sub">Registered accounts</p>
+            <p class="stat-trend up">↑ 12 this week</p>
+            <div class="stat-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">Businesses</p>
+            <div class="stat-value" id="statBiz">—</div>
+            <p class="stat-sub">Active listings</p>
+            <p class="stat-trend up">↑ 5 this week</p>
+            <div class="stat-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">Reviews</p>
+            <div class="stat-value" id="statReviews">—</div>
+            <p class="stat-sub">Customer reviews</p>
+            <p class="stat-trend up">↑ 34 this week</p>
+            <div class="stat-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">Pending Approvals</p>
+            <div class="stat-value" id="statPending">—</div>
+            <p class="stat-sub">Awaiting review</p>
+            <p class="stat-trend down">↑ 3 new today</p>
+            <div class="stat-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card">
+            <p class="chart-title">Registrations — Last 7 Days</p>
+            <div class="bar-chart" id="regChart"></div>
+          </div>
+          <div class="chart-card">
+            <p class="chart-title">Businesses by Category</p>
+            <div class="donut-wrap">
+              <div class="donut"></div>
+              <div class="donut-legend">
+                <div class="legend-row"><div class="legend-dot" style="background:var(--cerulean)"></div> Restaurants (30)</div>
+                <div class="legend-row"><div class="legend-dot" style="background:#0089C4"></div> Barbers (21)</div>
+                <div class="legend-row"><div class="legend-dot" style="background:#33BEFF"></div> Beauty (19)</div>
+                <div class="legend-row"><div class="legend-dot" style="background:#005f82"></div> Other (46)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <span class="table-title">Recent Activity</span>
+          </div>
+          <div style="padding: 0 24px 16px;">
+            <div class="activity-list" id="activityList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── USERS PANEL ── -->
+      <div class="panel" id="panel-users">
+        <div class="table-card">
+          <div class="table-header">
+            <span class="table-title">All Users</span>
+            <div class="table-controls">
+              <input class="tbl-search" type="text" placeholder="Search users…" oninput="renderUsers(this.value)"/>
+              <select class="tbl-filter" onchange="renderUsers()">
+                <option value="">All Roles</option>
+                <option value="customer">Customer</option>
+                <option value="business_owner">Business Owner</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Province</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── BUSINESSES PANEL ── -->
+      <div class="panel" id="panel-businesses">
+        <div class="table-card">
+          <div class="table-header">
+            <span class="table-title">All Businesses</span>
+            <div class="table-controls">
+              <input class="tbl-search" type="text" placeholder="Search businesses…" oninput="renderBusinesses(this.value)"/>
+              <select class="tbl-filter" onchange="renderBusinesses()">
+                <option value="">All Categories</option>
+                <option>Barbers &amp; Hair Salons</option>
+                <option>Mechanics &amp; Auto Repair</option>
+                <option>Tutors &amp; Education</option>
+                <option>Restaurants &amp; Food</option>
+                <option>Plumbers &amp; Electricians</option>
+                <option>Beauty &amp; Wellness</option>
+              </select>
+              <select class="tbl-filter" id="bizStatusFilter" onchange="renderBusinesses()">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Business Name</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bizTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── REVIEWS PANEL ── -->
+      <div class="panel" id="panel-reviews">
+        <div class="table-card">
+          <div class="table-header">
+            <span class="table-title">All Reviews</span>
+            <div class="table-controls">
+              <input class="tbl-search" type="text" placeholder="Search reviews…" oninput="renderReviews(this.value)"/>
+              <select class="tbl-filter" onchange="renderReviews()">
+                <option value="">All Ratings</option>
+                <option value="5">5 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="1">Flagged</option>
+              </select>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Reviewer</th>
+                <th>Business</th>
+                <th>Rating</th>
+                <th>Comment</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reviewsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+      <h3>Confirm Delete</h3>
+      <p id="deleteModalMsg">Are you sure you want to delete this item? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn-sm btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn-sm btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <div class="toast-dot" id="toastDot"></div>
+    <span id="toastMsg">Action completed.</span>
+  </div>
+
+  <script>
+    // ── Data ──
+    const USERS_KEY = 'lc_users';
+    const SESSION_KEY = 'lc_session';
+
+    // Seed users if empty
+    function getUsers() {
+      let users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+      if (users.length < 3) {
+        users = [
+          { id:1, name:'Sipho Dlamini',     email:'sipho@example.com',   role:'customer',       province:'Gauteng',      status:'active'  },
+          { id:2, name:'Zanele Mokoena',    email:'zanele@example.com',  role:'business_owner', province:'Western Cape', status:'active'  },
+          { id:3, name:'Thabo Nkosi',       email:'thabo@example.com',   role:'customer',       province:'KwaZulu-Natal',status:'active'  },
+          { id:4, name:'Ayanda Cele',       email:'ayanda@example.com',  role:'business_owner', province:'Gauteng',      status:'pending' },
+          { id:5, name:'Lerato Sithole',    email:'lerato@example.com',  role:'customer',       province:'Eastern Cape', status:'active'  },
+          { id:6, name:'Nomsa Khumalo',     email:'nomsa@example.com',   role:'customer',       province:'Limpopo',      status:'inactive'},
+          { id:7, name:'Admin User',        email:'admin@demo.com',      role:'admin',          province:'Gauteng',      status:'active'  },
+          { id:8, name:'Demo Customer',     email:'customer@demo.com',   role:'customer',       province:'Gauteng',      status:'active'  },
+          { id:9, name:'Demo Owner',        email:'owner@demo.com',      role:'business_owner', province:'Western Cape', status:'active'  },
+        ];
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      }
+      return users;
+    }
+
+    const BUSINESSES = [
+      { id:1,  name:'Kingsmen Cuts',          category:'Barbers & Hair Salons',    city:'Soweto',           province:'Gauteng',       rating:4.9, reviews:132, status:'active'  },
+      { id:2,  name:'Sharp Edge Barbershop',  category:'Barbers & Hair Salons',    city:'Bellville',        province:'Western Cape',  rating:4.7, reviews:88,  status:'active'  },
+      { id:3,  name:'ProDrive Mechanics',     category:'Mechanics & Auto Repair',  city:"Mitchell's Plain", province:'Western Cape',  rating:4.8, reviews:89,  status:'active'  },
+      { id:4,  name:"Thabo's Auto Centre",    category:'Mechanics & Auto Repair',  city:'Tembisa',          province:'Gauteng',       rating:4.5, reviews:74,  status:'pending' },
+      { id:5,  name:'Bright Minds Tutoring',  category:'Tutors & Education',       city:'Pretoria',         province:'Gauteng',       rating:4.9, reviews:103, status:'active'  },
+      { id:6,  name:"Mama's Kitchen",         category:'Restaurants & Food',       city:'Umlazi',           province:'KwaZulu-Natal', rating:4.6, reviews:207, status:'active'  },
+      { id:7,  name:'Braai Nation',           category:'Restaurants & Food',       city:'Soweto',           province:'Gauteng',       rating:4.8, reviews:189, status:'active'  },
+      { id:8,  name:'Durban Curry House',     category:'Restaurants & Food',       city:'Chatsworth',       province:'KwaZulu-Natal', rating:4.7, reviews:165, status:'active'  },
+      { id:9,  name:'Cape Sparks Electric',   category:'Plumbers & Electricians',  city:'Kraaifontein',     province:'Western Cape',  rating:4.8, reviews:72,  status:'active'  },
+      { id:10, name:'Glam By Zanele',         category:'Beauty & Wellness',        city:'Alexandra',        province:'Gauteng',       rating:4.9, reviews:118, status:'active'  },
+      { id:11, name:'The Glow Studio',        category:'Beauty & Wellness',        city:'Khayelitsha',      province:'Western Cape',  rating:4.7, reviews:93,  status:'pending' },
+      { id:12, name:'Ndlovu Plumbing Co.',    category:'Plumbers & Electricians',  city:'Midrand',          province:'Gauteng',       rating:4.6, reviews:58,  status:'inactive'},
+    ];
+
+    const REVIEWS = [
+      { id:1,  reviewer:'Sipho Dlamini',   business:'Kingsmen Cuts',         rating:5, comment:'Best barber in Soweto! Always on point with the fade.',       date:'2025-03-10', flagged:false },
+      { id:2,  reviewer:'Lerato Sithole',  business:"Mama's Kitchen",        rating:5, comment:'Umngqusho was absolutely delicious. Feels like home cooking.',  date:'2025-03-09', flagged:false },
+      { id:3,  reviewer:'Thabo Nkosi',     business:'ProDrive Mechanics',    rating:4, comment:'Fixed my Golf in one day. Fair price, good communication.',    date:'2025-03-08', flagged:false },
+      { id:4,  reviewer:'Nomsa Khumalo',   business:'Braai Nation',          rating:5, comment:'Boerewors rolls were huge and the chakalaka was 🔥.',          date:'2025-03-07', flagged:false },
+      { id:5,  reviewer:'Ayanda Cele',     business:'Bright Minds Tutoring', rating:5, comment:'My daughter\'s marks improved from 54% to 78% in one term.',   date:'2025-03-06', flagged:false },
+      { id:6,  reviewer:'Demo Customer',   business:'Glam By Zanele',        rating:3, comment:'Nails looked great but waited 40 minutes past appointment.',   date:'2025-03-05', flagged:true  },
+      { id:7,  reviewer:'Sipho Dlamini',   business:'Cape Sparks Electric',  rating:5, comment:'Solar installation was professional and done same day.',       date:'2025-03-04', flagged:false },
+      { id:8,  reviewer:'Lerato Sithole',  business:'Durban Curry House',    rating:4, comment:'Bunny chow was massive and the mutton curry was spot on.',     date:'2025-03-03', flagged:false },
+    ];
+
+    const ACTIVITY = [
+      { text: '<strong>Ayanda Cele</strong> submitted a new business listing — Ayanda\'s Hair Studio', time: '2 min ago',  color: 'var(--cerulean)' },
+      { text: '<strong>New review</strong> posted on Braai Nation by Nomsa Khumalo',                    time: '18 min ago', color: 'var(--success)'  },
+      { text: '<strong>Thabo Nkosi</strong> registered as a new customer',                              time: '1 hr ago',   color: 'var(--cerulean)' },
+      { text: '<strong>Review flagged</strong> on Glam By Zanele — awaiting moderation',                time: '2 hr ago',   color: 'var(--warning)'  },
+      { text: '<strong>Ndlovu Plumbing Co.</strong> listing marked as inactive',                        time: '5 hr ago',   color: 'var(--danger)'   },
+      { text: '<strong>Cape Sparks Electric</strong> verified and approved',                             time: 'Yesterday',  color: 'var(--success)'  },
+    ];
+
+    // ── Auth guard ──
+    const session = JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || 'null');
+    if (!session || session.role !== 'admin') {
+      window.location.href = 'login.html';
+    } else {
+      document.getElementById('adminName').textContent = session.name;
+      document.getElementById('adminAvatar').textContent = session.name.charAt(0).toUpperCase();
+    }
+
+    function logout() {
+      localStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY);
+      window.location.href = 'login.html';
+    }
+
+    // ── Panel navigation ──
+    function showPanel(id, el) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('panel-' + id).classList.add('active');
+      if (el) el.classList.add('active');
+      const titles = { dashboard:'Dashboard', users:'Users', businesses:'Businesses', reviews:'Reviews' };
+      document.getElementById('topbarTitle').textContent = titles[id] || id;
+      closeSidebar();
+    }
+
+    function toggleSidebar() {
+      document.body.classList.toggle('sidebar-open');
+    }
+
+    function closeSidebar() {
+      document.body.classList.remove('sidebar-open');
+    }
+
+    // ── Dashboard ──
+    function initDashboard() {
+      const users = getUsers();
+      document.getElementById('statUsers').textContent    = users.length;
+      document.getElementById('statBiz').textContent      = BUSINESSES.filter(b => b.status==='active').length;
+      document.getElementById('statReviews').textContent  = REVIEWS.length;
+      document.getElementById('statPending').textContent  = BUSINESSES.filter(b => b.status==='pending').length;
+
+      // Bar chart
+      const days  = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      const vals  = [3, 7, 4, 9, 5, 12, 6];
+      const maxV  = Math.max(...vals);
+      document.getElementById('regChart').innerHTML = days.map((d,i) =>
+        `<div class="bar-wrap">
+          <div class="bar" style="height:${Math.round((vals[i]/maxV)*90)}px" title="${vals[i]} registrations"></div>
+          <span class="bar-label">${d}</span>
+        </div>`
+      ).join('');
+
+      // Activity
+      document.getElementById('activityList').innerHTML = ACTIVITY.map(a =>
+        `<div class="activity-item">
+          <div class="activity-dot" style="background:${a.color}"></div>
+          <span class="activity-text">${a.text}</span>
+          <span class="activity-time">${a.time}</span>
+        </div>`
+      ).join('');
+    }
+
+    // ── Users table ──
+    function renderUsers(q = '') {
+      const role = document.querySelector('#panel-users .tbl-filter')?.value || '';
+      const users = getUsers().filter(u =>
+        (!q || u.name.toLowerCase().includes(q.toLowerCase()) || u.email.toLowerCase().includes(q.toLowerCase())) &&
+        (!role || u.role === role)
+      );
+      const roleLabel = { customer:'Customer', business_owner:'Business Owner', admin:'Admin' };
+      const tbody = document.getElementById('usersTableBody');
+      if (!users.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><p>No users found.</p></div></td></tr>`; return; }
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td class="td-name">${u.name}</td>
+          <td>${u.email}</td>
+          <td><span class="pill ${u.role==='admin'?'pill-verified':'pill-active'}">${roleLabel[u.role]||u.role}</span></td>
+          <td>${u.province || '—'}</td>
+          <td><span class="pill ${u.status==='active'?'pill-active':u.status==='pending'?'pill-pending':'pill-inactive'}">${u.status||'active'}</span></td>
+          <td><div class="td-actions">
+            <button class="btn-sm btn-ghost" onclick="showToast('User edited (mock)','var(--cerulean)')">Edit</button>
+            <button class="btn-sm btn-danger" onclick="confirmDelete('Delete user &ldquo;${u.name}&rdquo;?', () => deleteUser(${u.id}))">Delete</button>
+          </div></td>
+        </tr>
+      `).join('');
+    }
+
+    function deleteUser(id) {
+      let users = getUsers().filter(u => u.id !== id);
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      renderUsers();
+      initDashboard();
+      showToast('User deleted', 'var(--danger)');
+    }
+
+    // ── Businesses table ──
+    function renderBusinesses(q = '') {
+      const cat    = document.querySelector('#panel-businesses .tbl-filter')?.value || '';
+      const status = document.getElementById('bizStatusFilter')?.value || '';
+      const list   = BUSINESSES.filter(b =>
+        (!q || b.name.toLowerCase().includes(q.toLowerCase()) || b.city.toLowerCase().includes(q.toLowerCase())) &&
+        (!cat || b.category === cat) &&
+        (!status || b.status === status)
+      );
+      const tbody = document.getElementById('bizTableBody');
+      if (!list.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><p>No businesses found.</p></div></td></tr>`; return; }
+      tbody.innerHTML = list.map(b => `
+        <tr>
+          <td class="td-name">${b.name}</td>
+          <td>${b.category}</td>
+          <td>${b.city}, ${b.province}</td>
+          <td><span class="tbl-stars">${'★'.repeat(Math.floor(b.rating))}</span> ${b.rating}</td>
+          <td><span class="pill ${b.status==='active'?'pill-active':b.status==='pending'?'pill-pending':'pill-inactive'}">${b.status}</span></td>
+          <td><div class="td-actions">
+            ${b.status==='pending' ? `<button class="btn-sm btn-success" onclick="approveBiz(${b.id})">Approve</button>` : ''}
+            <button class="btn-sm btn-ghost" onclick="showToast('Opening profile…','var(--cerulean)')">View</button>
+            <button class="btn-sm btn-danger" onclick="confirmDelete('Delete &ldquo;${b.name}&rdquo;?', () => showToast('Business deleted','var(--danger)'))">Delete</button>
+          </div></td>
+        </tr>
+      `).join('');
+    }
+
+    function approveBiz(id) {
+      const b = BUSINESSES.find(b => b.id === id);
+      if (b) { b.status = 'active'; renderBusinesses(); initDashboard(); showToast(`${b.name} approved`, 'var(--success)'); }
+    }
+
+    // ── Reviews table ──
+    function renderReviews(q = '') {
+      const ratingFilter = document.querySelector('#panel-reviews .tbl-filter')?.value || '';
+      const list = REVIEWS.filter(r =>
+        (!q || r.reviewer.toLowerCase().includes(q.toLowerCase()) || r.business.toLowerCase().includes(q.toLowerCase()) || r.comment.toLowerCase().includes(q.toLowerCase())) &&
+        (!ratingFilter || (ratingFilter === '1' ? r.flagged : r.rating === parseInt(ratingFilter)))
+      );
+      const tbody = document.getElementById('reviewsTableBody');
+      if (!list.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><p>No reviews found.</p></div></td></tr>`; return; }
+      tbody.innerHTML = list.map(r => `
+        <tr>
+          <td class="td-name">${r.reviewer}</td>
+          <td>${r.business}</td>
+          <td><span class="tbl-stars">${'★'.repeat(r.rating)}</span> ${r.rating}.0</td>
+          <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.comment}">${r.flagged ? '<span class="pill pill-pending" style="margin-right:6px;">Flagged</span>' : ''}${r.comment}</td>
+          <td>${r.date}</td>
+          <td><div class="td-actions">
+            ${r.flagged ? `<button class="btn-sm btn-success" onclick="unflag(${r.id})">Approve</button>` : ''}
+            <button class="btn-sm btn-danger" onclick="confirmDelete('Delete this review?', () => showToast('Review deleted','var(--danger)'))">Remove</button>
+          </div></td>
+        </tr>
+      `).join('');
+    }
+
+    function unflag(id) {
+      const r = REVIEWS.find(r => r.id === id);
+      if (r) { r.flagged = false; renderReviews(); showToast('Review approved', 'var(--success)'); }
+    }
+
+    // ── Global search ──
+    function globalSearchFn() {
+      const q = document.getElementById('globalSearch').value;
+      renderUsers(q); renderBusinesses(q); renderReviews(q);
+    }
+
+    // ── Modal ──
+    let pendingAction = null;
+    function confirmDelete(msg, action) {
+      document.getElementById('deleteModalMsg').textContent = msg.replace(/&ldquo;/g,'"').replace(/&rdquo;/g,'"');
+      pendingAction = action;
+      document.getElementById('deleteModal').classList.add('show');
+      document.getElementById('confirmDeleteBtn').onclick = () => { action(); closeModal(); };
+    }
+    function closeModal() { document.getElementById('deleteModal').classList.remove('show'); pendingAction = null; }
+    document.getElementById('deleteModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+    // ── Toast ──
+    let toastTimer;
+    function showToast(msg, color = 'var(--cerulean)') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      document.getElementById('toastDot').style.background = color;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+
+    // ── Init ──
+    initDashboard();
+    renderUsers();
+    renderBusinesses();
+    renderReviews();
+  </script>
+
+</body>
+</html>

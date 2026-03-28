@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login – LocalConnect SA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@200;300;400;500&family=Raleway:wght@100;200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cerulean: #00ADEF;
+      --cerulean-dark: #0089C4;
+      --cerulean-light: #33BEFF;
+      --cerulean-faint: rgba(0,173,239,0.07);
+      --black: #000000;
+      --white: #FFFFFF;
+      --gray-200: #E8E8E8;
+      --gray-500: #888888;
+      --error: #ff4d4d;
+      --success: #00c47a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      background: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,173,239,0.15);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.7rem;
+      letter-spacing: 4px;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--cerulean); }
+
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.72rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--cerulean); }
+    .nav-cta {
+      background: var(--cerulean) !important;
+      color: var(--black) !important;
+      padding: 7px 18px;
+      border-radius: 2px;
+      font-weight: 300 !important;
+    }
+
+    /* ── BACKGROUND ── */
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,173,239,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(0,173,239,0.05) 0%, transparent 60%),
+        var(--black);
+    }
+
+    /* Thin diagonal lines texture */
+    .page-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 40px,
+        rgba(0,173,239,0.02) 40px,
+        rgba(0,173,239,0.02) 41px
+      );
+    }
+
+    /* ── MAIN ── */
+    main {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 24px 60px;
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 460px;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CARD ── */
+    .auth-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(0,173,239,0.18);
+      border-radius: 8px;
+      padding: 52px 48px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,173,239,0.06);
+    }
+
+    .auth-eyebrow {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.65rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--cerulean);
+      margin-bottom: 12px;
+    }
+
+    .auth-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 2.8rem;
+      letter-spacing: 3px;
+      line-height: 1;
+      color: var(--white);
+      margin-bottom: 8px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.15), 0 2px 20px rgba(0,173,239,0.1);
+    }
+
+    .auth-subtitle {
+      font-size: 0.82rem;
+      font-weight: 200;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.3px;
+      margin-bottom: 40px;
+    }
+
+    /* ── FORM ── */
+    .form-group {
+      margin-bottom: 22px;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+
+    .form-group:focus-within label { color: var(--cerulean); }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px;
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--cerulean);
+      background: rgba(0,173,239,0.04);
+      box-shadow: 0 0 0 3px rgba(0,173,239,0.08);
+    }
+
+    input.error-field { border-color: var(--error) !important; }
+
+    input::placeholder { color: rgba(255,255,255,0.2); font-weight: 200; }
+
+    /* Password toggle */
+    .input-wrap { position: relative; }
+    .toggle-pw {
+      position: absolute;
+      right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      cursor: pointer;
+      color: rgba(255,255,255,0.3);
+      padding: 4px;
+      transition: color 0.2s;
+      display: flex; align-items: center;
+    }
+    .toggle-pw:hover { color: var(--cerulean); }
+
+    /* Row: remember + forgot */
+    .form-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      margin-top: -6px;
+    }
+
+    .remember-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .remember-wrap input[type="checkbox"] {
+      width: 14px; height: 14px;
+      accent-color: var(--cerulean);
+      cursor: pointer;
+    }
+
+    .remember-wrap span {
+      font-size: 0.75rem;
+      font-weight: 200;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.3px;
+    }
+
+    .forgot-link {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 200;
+      letter-spacing: 1px;
+      color: var(--cerulean);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .forgot-link:hover { opacity: 0.7; }
+
+    /* Submit */
+    .btn-submit {
+      width: 100%;
+      padding: 15px;
+      background: var(--cerulean);
+      color: var(--black);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-submit:hover {
+      background: var(--cerulean-light);
+      box-shadow: 0 8px 24px rgba(0,173,239,0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active { transform: translateY(0); }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Spinner inside button */
+    .spinner {
+      display: none;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: var(--black);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .btn-submit.loading .btn-text { display: none; }
+    .btn-submit.loading .spinner { display: block; }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 28px 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+    }
+    .divider span {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+    }
+
+    /* Alert messages */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 3px;
+      font-size: 0.8rem;
+      font-weight: 300;
+      letter-spacing: 0.3px;
+      margin-bottom: 24px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    .alert.show { display: flex; }
+    .alert-error {
+      background: rgba(255,77,77,0.1);
+      border: 1px solid rgba(255,77,77,0.3);
+      color: #ff8080;
+    }
+    .alert-success {
+      background: rgba(0,196,122,0.1);
+      border: 1px solid rgba(0,196,122,0.3);
+      color: #00c47a;
+    }
+
+    /* Role selector */
+    .role-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 28px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .role-tab {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .role-tab.active {
+      background: var(--cerulean);
+      color: var(--black);
+    }
+
+    /* Footer switch link */
+    .auth-switch {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.78rem;
+      font-weight: 200;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.3px;
+    }
+    .auth-switch a {
+      color: var(--cerulean);
+      text-decoration: none;
+      margin-left: 6px;
+      transition: opacity 0.2s;
+    }
+    .auth-switch a:hover { opacity: 0.7; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 20px 48px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    footer p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* Field error text */
+    .field-error {
+      font-size: 0.7rem;
+      font-weight: 200;
+      color: var(--error);
+      margin-top: 5px;
+      letter-spacing: 0.3px;
+      display: none;
+    }
+    .field-error.show { display: block; }
+
+    @media (max-width: 520px) {
+      .auth-card { padding: 36px 24px; }
+      nav { padding: 0 20px; }
+      .nav-links { display: flex; gap: 14px; overflow-x: auto; max-width: calc(100vw - 155px); scrollbar-width: none; }
+      .nav-links::-webkit-scrollbar { display: none; }
+      .nav-links a { font-size: 0.63rem; letter-spacing: 1.6px; white-space: nowrap; }
+      .nav-logo { font-size: 1.3rem; letter-spacing: 2px; }
+      .nav-links { max-width: calc(100vw - 130px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-bg"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">Local<span>Connect</span> SA</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="Listings.html">Browse</a></li>
+      <li><a href="Listings.html">Categories</a></li>
+      <li><a href="register.html" class="nav-cta">Register</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="auth-container">
+      <div class="auth-card">
+
+        <p class="auth-eyebrow">Welcome Back</p>
+        <h1 class="auth-title">Sign In</h1>
+        <p class="auth-subtitle">Access your LocalConnect SA account</p>
+
+        <!-- Role selector -->
+        <div class="role-tabs" role="tablist">
+          <button class="role-tab active" data-role="customer" onclick="setRole(this)">Customer</button>
+          <button class="role-tab" data-role="business_owner" onclick="setRole(this)">Business Owner</button>
+          <button class="role-tab" data-role="admin" onclick="setRole(this)">Admin</button>
+        </div>
+
+        <!-- Alert -->
+        <div class="alert alert-error" id="alertError">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="alertErrorMsg">Invalid email or password.</span>
+        </div>
+
+        <div class="alert alert-success" id="alertSuccess">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="alertSuccessMsg">Login successful! Redirecting…</span>
+        </div>
+
+        <!-- Form -->
+        <form id="loginForm" novalidate>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="you@example.com" autocomplete="email"/>
+            <span class="field-error" id="emailError">Please enter a valid email address.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrap">
+              <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password"/>
+              <button type="button" class="toggle-pw" onclick="togglePassword('password', this)" aria-label="Show password">
+                <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <span class="field-error" id="passwordError">Password is required.</span>
+          </div>
+
+          <div class="form-row">
+            <label class="remember-wrap">
+              <input type="checkbox" id="remember"/>
+              <span>Remember me</span>
+            </label>
+            <a href="Forgot-Password.html" class="forgot-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn-submit" id="loginBtn">
+            <span class="btn-text">Sign In</span>
+            <div class="spinner"></div>
+          </button>
+        </form>
+
+        <div class="divider"><span>New to LocalConnect?</span></div>
+
+        <div class="auth-switch">
+          Don't have an account?
+          <a href="register.html">Create one free</a>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 LocalConnect SA — All rights reserved</p>
+  </footer>
+
+  <script src="assets/localconnect.js"></script>
+  <script>
+    let selectedRole = 'customer';
+
+    (async function initPage() {
+      const session = await LocalConnect.fetchSession();
+      if (session) window.location.href = 'index.html';
+    })();
+
+    function setRole(btn) {
+      document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      selectedRole = btn.dataset.role;
+    }
+
+    function togglePassword(fieldId, btn) {
+      const input = document.getElementById(fieldId);
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.innerHTML = isHidden
+        ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+        : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    }
+
+    function showError(msg) {
+      document.getElementById('alertErrorMsg').textContent = msg;
+      document.getElementById('alertError').classList.add('show');
+      document.getElementById('alertSuccess').classList.remove('show');
+    }
+
+    function showSuccess(msg) {
+      document.getElementById('alertSuccessMsg').textContent = msg;
+      document.getElementById('alertSuccess').classList.add('show');
+      document.getElementById('alertError').classList.remove('show');
+    }
+
+    function clearAlerts() {
+      document.getElementById('alertError').classList.remove('show');
+      document.getElementById('alertSuccess').classList.remove('show');
+    }
+
+    function setFieldError(id, errorId, show) {
+      const input = document.getElementById(id);
+      const err = document.getElementById(errorId);
+      if (show) {
+        input.classList.add('error-field');
+        err.classList.add('show');
+      } else {
+        input.classList.remove('error-field');
+        err.classList.remove('show');
+      }
+    }
+
+    function validateForm() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      let valid = true;
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      setFieldError('email', 'emailError', !emailOk);
+      if (!emailOk) valid = false;
+      setFieldError('password', 'passwordError', !password);
+      if (!password) valid = false;
+      return valid;
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      clearAlerts();
+      if (!validateForm()) return;
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      const remember = document.getElementById('remember').checked;
+      const btn = document.getElementById('loginBtn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+      setTimeout(async () => {
+        try {
+          const user = await LocalConnect.login({ email, password, role: selectedRole }, remember);
+          btn.classList.remove('loading');
+          btn.disabled = false;
+          showSuccess(`Welcome back, ${user.name}! Redirecting...`);
+          setTimeout(() => { window.location.href = 'index.html'; }, 1400);
+        } catch (error) {
+          btn.classList.remove('loading');
+          btn.disabled = false;
+          showError(error.message || 'Unable to sign in right now.');
+        }
+      }, 450);
+    });
+
+    ['email','password'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        document.getElementById(id).classList.remove('error-field');
+        const errId = id === 'email' ? 'emailError' : 'passwordError';
+        document.getElementById(errId).classList.remove('show');
+        clearAlerts();
+      });
+    });
+  </script>
+
+</body>
+</html>

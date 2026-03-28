@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Browse Businesses – LocalConnect SA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@200;300;400;500&family=Raleway:wght@100;200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cerulean: #00ADEF;
+      --cerulean-dark: #0089C4;
+      --cerulean-light: #33BEFF;
+      --cerulean-faint: rgba(0,173,239,0.07);
+      --black: #000000;
+      --white: #FFFFFF;
+      --gray-50:  #FAFAFA;
+      --gray-100: #F4F4F4;
+      --gray-200: #E8E8E8;
+      --gray-400: #AAAAAA;
+      --gray-500: #888888;
+      --gray-700: #444444;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      background: var(--gray-50);
+      color: var(--black);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 68px;
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,173,239,0.15);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: 1.7rem; letter-spacing: 4px; color: var(--white); text-decoration: none;
+    }
+    .nav-logo span { color: var(--cerulean); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.72rem; letter-spacing: 2.5px; text-transform: uppercase;
+      color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--cerulean); }
+    .nav-cta {
+      background: var(--cerulean) !important; color: var(--black) !important;
+      padding: 7px 18px; border-radius: 2px; font-weight: 300 !important;
+    }
+
+    /* ── SEARCH HERO ── */
+    .search-hero {
+      background: var(--black);
+      padding: 108px 48px 48px;
+      border-bottom: 1px solid rgba(0,173,239,0.12);
+      position: relative;
+      overflow: hidden;
+    }
+    .search-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 100% at 80% 50%, rgba(0,173,239,0.07) 0%, transparent 70%);
+    }
+    .search-hero-inner {
+      max-width: 1100px; margin: 0 auto; position: relative; z-index: 1;
+    }
+    .search-hero-top {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 24px; flex-wrap: wrap; margin-bottom: 28px;
+    }
+    .search-hero h1 {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: clamp(2rem, 4vw, 3rem); letter-spacing: 4px;
+      color: var(--white);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.1), 0 2px 20px rgba(0,173,239,0.12);
+    }
+    .search-hero h1 span { color: var(--cerulean); }
+    .result-count {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.68rem; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+
+    /* Search bar */
+    .search-row {
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .search-input-wrap {
+      flex: 1; min-width: 220px; position: relative;
+    }
+    .search-input-wrap svg {
+      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+      color: var(--gray-400); pointer-events: none;
+    }
+    .search-row input, .search-row select {
+      width: 100%; padding: 13px 18px 13px 44px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 3px; color: var(--white);
+      font-family: 'Montserrat', sans-serif; font-weight: 300;
+      font-size: 0.88rem; letter-spacing: 0.4px; outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .search-row select {
+      padding-left: 18px; cursor: pointer; min-width: 180px; flex: 0 0 auto;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.35)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .search-row select option { background: #111; }
+    .search-row input:focus, .search-row select:focus {
+      border-color: var(--cerulean); background: rgba(0,173,239,0.05);
+    }
+    .search-row input::placeholder { color: rgba(255,255,255,0.22); }
+    .btn-search {
+      padding: 13px 28px;
+      background: var(--cerulean); color: var(--black);
+      font-family: 'Raleway', sans-serif; font-weight: 300;
+      font-size: 0.72rem; letter-spacing: 2.5px; text-transform: uppercase;
+      border: none; border-radius: 3px; cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      white-space: nowrap;
+    }
+    .btn-search:hover { background: var(--cerulean-light); box-shadow: 0 4px 20px rgba(0,173,239,0.3); }
+
+    /* ── MAIN LAYOUT ── */
+    .main-layout {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 260px 1fr;
+      gap: 32px; padding: 40px 48px 80px;
+    }
+
+    /* ── SIDEBAR FILTERS ── */
+    .sidebar { position: sticky; top: 88px; align-self: start; }
+
+    .filter-card {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: 6px; padding: 28px 24px; margin-bottom: 16px;
+    }
+    .filter-title {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.62rem; letter-spacing: 3.5px; text-transform: uppercase;
+      color: var(--cerulean); margin-bottom: 18px;
+    }
+    .filter-group { margin-bottom: 10px; }
+    .filter-label {
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; padding: 6px 0;
+      font-size: 0.82rem; font-weight: 300; color: var(--gray-700);
+      transition: color 0.15s;
+    }
+    .filter-label:hover { color: var(--cerulean); }
+    .filter-label input[type="checkbox"] { accent-color: var(--cerulean); width: 14px; height: 14px; }
+    .filter-label span.count {
+      margin-left: auto; font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.65rem; color: var(--gray-400);
+    }
+
+    /* Rating filter */
+    .star-filter {
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer; padding: 5px 0;
+      font-size: 0.82rem; font-weight: 300; color: var(--gray-700);
+    }
+    .star-filter input[type="radio"] { accent-color: var(--cerulean); }
+    .star-filter .stars { color: var(--cerulean); font-size: 0.78rem; }
+
+    .btn-clear-filters {
+      width: 100%; padding: 10px;
+      background: transparent; border: 1px solid var(--gray-200);
+      border-radius: 3px; cursor: pointer;
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gray-500); transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-clear-filters:hover { border-color: var(--cerulean); color: var(--cerulean); }
+
+    /* ── LISTINGS AREA ── */
+    .listings-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+    }
+    .listings-meta {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gray-500);
+    }
+    .listings-meta strong { color: var(--black); font-weight: 400; }
+
+    .sort-wrap { display: flex; align-items: center; gap: 10px; }
+    .sort-wrap label {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gray-400);
+    }
+    .sort-wrap select {
+      padding: 7px 32px 7px 12px; background: var(--white);
+      border: 1px solid var(--gray-200); border-radius: 3px;
+      font-family: 'Montserrat', sans-serif; font-weight: 300;
+      font-size: 0.8rem; color: var(--black); outline: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    /* View toggle */
+    .view-toggle { display: flex; gap: 4px; }
+    .view-btn {
+      width: 34px; height: 34px; border: 1px solid var(--gray-200);
+      background: var(--white); border-radius: 3px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gray-400); transition: all 0.15s;
+    }
+    .view-btn.active { background: var(--black); border-color: var(--black); color: var(--white); }
+    .view-btn:hover:not(.active) { border-color: var(--cerulean); color: var(--cerulean); }
+
+    /* ── BUSINESS CARD (GRID) ── */
+    #listingsGrid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    #listingsGrid.list-view { grid-template-columns: 1fr; }
+
+    .biz-card {
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: 6px; overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      cursor: pointer; text-decoration: none; color: inherit; display: block;
+    }
+    .biz-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--cerulean);
+      box-shadow: 0 8px 32px rgba(0,173,239,0.12);
+    }
+
+    /* Grid card */
+    .card-top {
+      height: 120px; background: var(--black);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .card-top.has-image {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .card-top.has-image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0.12));
+    }
+    .card-top svg { opacity: 0.25; transition: opacity 0.2s; }
+    .biz-card:hover .card-top svg { opacity: 0.45; }
+    .card-top::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px; background: var(--cerulean);
+      transform: scaleX(0); transition: transform 0.3s; transform-origin: left;
+    }
+    .biz-card:hover .card-top::after { transform: scaleX(1); }
+
+    .badge {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--cerulean); color: var(--black);
+      font-family: 'Raleway', sans-serif; font-weight: 300;
+      font-size: 0.58rem; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 2px;
+    }
+
+    .card-body { padding: 20px; }
+    .card-cat {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--cerulean); margin-bottom: 6px;
+    }
+    .card-name {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: 1.3rem; letter-spacing: 1.5px; margin-bottom: 5px;
+    }
+    .card-location {
+      font-size: 0.75rem; font-weight: 200; color: var(--gray-500);
+      display: flex; align-items: center; gap: 5px; margin-bottom: 12px;
+    }
+    .card-location svg { flex-shrink: 0; }
+    .card-stars {
+      display: flex; align-items: center; gap: 6px; margin-bottom: 12px;
+    }
+    .stars { color: var(--cerulean); font-size: 0.8rem; }
+    .rating-text {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.68rem; color: var(--gray-400);
+    }
+    .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag {
+      padding: 3px 10px; border: 1px solid var(--gray-200);
+      border-radius: 2px; font-size: 0.65rem; font-weight: 300;
+      color: var(--gray-500); letter-spacing: 0.3px;
+    }
+    .card-footer {
+      padding: 14px 20px; border-top: 1px solid var(--gray-100);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-footer-text {
+      font-size: 0.72rem; font-weight: 200; color: var(--gray-400);
+    }
+    .btn-view {
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--cerulean); text-decoration: none;
+      padding: 5px 0; border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .btn-view:hover { border-color: var(--cerulean); }
+
+    /* ── LIST VIEW ── */
+    #listingsGrid.list-view .biz-card { display: flex; }
+    #listingsGrid.list-view .card-top { width: 140px; height: auto; flex-shrink: 0; border-radius: 0; }
+    #listingsGrid.list-view .card-body { flex: 1; }
+    #listingsGrid.list-view .card-top::after { width: 3px; height: 100%; bottom: auto; top: 0; left: auto; right: 0; transform: scaleY(0); transform-origin: top; }
+    #listingsGrid.list-view .biz-card:hover .card-top::after { transform: scaleY(1); }
+
+    /* ── NO RESULTS ── */
+    .no-results {
+      grid-column: 1/-1; text-align: center; padding: 80px 24px;
+    }
+    .no-results h3 {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 10px;
+    }
+    .no-results p { font-size: 0.85rem; font-weight: 200; color: var(--gray-500); }
+
+    /* ── PAGINATION ── */
+    .pagination {
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px; margin-top: 40px;
+    }
+    .page-btn {
+      width: 36px; height: 36px; border: 1px solid var(--gray-200);
+      background: var(--white); border-radius: 3px; cursor: pointer;
+      font-family: 'Raleway', sans-serif; font-weight: 200;
+      font-size: 0.78rem; color: var(--gray-700);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .page-btn:hover { border-color: var(--cerulean); color: var(--cerulean); }
+    .page-btn.active { background: var(--cerulean); border-color: var(--cerulean); color: var(--black); }
+    .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--black); padding: 32px 48px; text-align: center;
+      border-top: 1px solid #1a1a1a;
+    }
+    footer p {
+      font-family: 'Montserrat', sans-serif; font-weight: 200;
+      font-size: 0.72rem; color: rgba(255,255,255,0.25); letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 900px) {
+      .main-layout { grid-template-columns: 1fr; padding: 24px 20px 60px; }
+      .sidebar { position: static; display: flex; gap: 12px; flex-wrap: wrap; }
+      .filter-card { flex: 1 1 100%; min-width: 0; }
+      nav { padding: 0 20px; }
+      .nav-links { display: flex; gap: 14px; overflow-x: auto; max-width: calc(100vw - 155px); scrollbar-width: none; }
+      .nav-links::-webkit-scrollbar { display: none; }
+      .nav-links a { font-size: 0.63rem; letter-spacing: 1.6px; white-space: nowrap; }
+      .search-hero { padding: 108px 20px 36px; }
+      .search-row > * { flex: 1 1 100%; min-width: 0; }
+      .search-row select { min-width: 0; }
+      .search-row select, .btn-search { width: 100%; }
+    }
+    @media (max-width: 640px) {
+      .nav-logo { font-size: 1.3rem; letter-spacing: 2px; }
+      .nav-links { max-width: calc(100vw - 130px); }
+      #listingsGrid { grid-template-columns: 1fr; }
+      #listingsGrid.list-view .biz-card { display: block; }
+      #listingsGrid.list-view .card-top { width: 100%; height: 170px; }
+      .listings-header { align-items: flex-start; }
+      .sort-wrap { width: 100%; justify-content: space-between; }
+      .sort-wrap select { flex: 1; min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">Local<span>Connect</span> SA</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="listings.html" class="active">Browse</a></li>
+      <li><a href="Listings.html">Categories</a></li>
+      <li><a href="About.html">About</a></li>
+      <li><a href="login.html" class="nav-cta" id="navAuthLink">Sign In</a></li>
+    </ul>
+  </nav>
+
+  <!-- SEARCH HERO -->
+  <section class="search-hero">
+    <div class="search-hero-inner">
+      <div class="search-hero-top">
+        <h1>Browse <span>Local</span> Businesses</h1>
+        <span class="result-count" id="resultCount">Loading…</span>
+      </div>
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Search businesses, services…" oninput="filterListings()"/>
+        </div>
+        <select id="categoryFilter" onchange="filterListings()">
+          <option value="">All Categories</option>
+          <option>Barbers &amp; Hair Salons</option>
+          <option>Mechanics &amp; Auto Repair</option>
+          <option>Tutors &amp; Education</option>
+          <option>Restaurants &amp; Food</option>
+          <option>Plumbers &amp; Electricians</option>
+          <option>Beauty &amp; Wellness</option>
+        </select>
+        <select id="provinceFilter" onchange="filterListings()">
+          <option value="">All Provinces</option>
+          <option>Gauteng</option>
+          <option>Western Cape</option>
+          <option>KwaZulu-Natal</option>
+          <option>Eastern Cape</option>
+          <option>Limpopo</option>
+          <option>Mpumalanga</option>
+          <option>North West</option>
+          <option>Free State</option>
+          <option>Northern Cape</option>
+        </select>
+        <button class="btn-search" onclick="filterListings()">Search</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <div class="main-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="filter-card">
+        <p class="filter-title">Category</p>
+        <div class="filter-group"><label class="filter-label"><input type="checkbox" value="Barbers &amp; Hair Salons" onchange="filterListings()"> Barbers &amp; Hair Salons <span class="count">21</span></label></div>
+        <div class="filter-group"><label class="filter-label"><input type="checkbox" value="Mechanics &amp; Auto Repair" onchange="filterListings()"> Mechanics &amp; Auto Repair <span class="count">18</span></label></div>
+        <div class="filter-group"><label class="filter-label"><input type="checkbox" value="Tutors &amp; Education" onchange="filterListings()"> Tutors &amp; Education <span class="count">16</span></label></div>
+        <div class="filter-group"><label class="filter-label"><input type="checkbox" value="Restaurants &amp; Food" onchange="filterListings()"> Restaurants &amp; Food <span class="count">30</span></label></div>
+        <div class="filter-group"><label class="filter-label"><input type="checkbox" value="Plumbers &amp; Electricians" onchange="filterListings()"> Plumbers &amp; Electricians <span class="count">14</span></label></div>
+        <div class="filter-group"><label class="filter-label"><input type="checkbox" value="Beauty &amp; Wellness" onchange="filterListings()"> Beauty &amp; Wellness <span class="count">19</span></label></div>
+      </div>
+
+      <div class="filter-card">
+        <p class="filter-title">Min. Rating</p>
+        <div class="filter-group"><label class="star-filter"><input type="radio" name="rating" value="0" checked onchange="filterListings()"> <span class="stars">★★★★★</span> Any</label></div>
+        <div class="filter-group"><label class="star-filter"><input type="radio" name="rating" value="3" onchange="filterListings()"> <span class="stars">★★★</span> 3+</label></div>
+        <div class="filter-group"><label class="star-filter"><input type="radio" name="rating" value="4" onchange="filterListings()"> <span class="stars">★★★★</span> 4+</label></div>
+        <div class="filter-group"><label class="star-filter"><input type="radio" name="rating" value="4.5" onchange="filterListings()"> <span class="stars">★★★★½</span> 4.5+</label></div>
+      </div>
+
+      <div class="filter-card">
+        <p class="filter-title">Province</p>
+        <div class="filter-group"><label class="filter-label"><input type="checkbox" value="Gauteng" onchange="filterListings()"> Gauteng <span class="count">34</span></label></div>
+        <div class="filter-group"><label class="filter-label"><input type="checkbox" value="Western Cape" onchange="filterListings()"> Western Cape <span class="count">28</span></label></div>
+        <div class="filter-group"><label class="filter-label"><input type="checkbox" value="KwaZulu-Natal" onchange="filterListings()"> KwaZulu-Natal <span class="count">22</span></label></div>
+        <div class="filter-group"><label class="filter-label"><input type="checkbox" value="Eastern Cape" onchange="filterListings()"> Eastern Cape <span class="count">12</span></label></div>
+        <div class="filter-group"><label class="filter-label"><input type="checkbox" value="Limpopo" onchange="filterListings()"> Limpopo <span class="count">8</span></label></div>
+      </div>
+
+      <button class="btn-clear-filters" onclick="clearFilters()">Clear All Filters</button>
+    </aside>
+
+    <!-- LISTINGS -->
+    <div>
+      <div class="listings-header">
+        <span class="listings-meta"><strong id="visibleCount">18</strong> businesses found</span>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div class="sort-wrap">
+            <label>Sort:</label>
+            <select id="sortSelect" onchange="filterListings()">
+              <option value="rating">Top Rated</option>
+              <option value="name">Name A–Z</option>
+              <option value="reviews">Most Reviewed</option>
+            </select>
+          </div>
+          <div class="view-toggle">
+            <button class="view-btn active" id="gridBtn" onclick="setView('grid')" title="Grid view">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            </button>
+            <button class="view-btn" id="listBtn" onclick="setView('list')" title="List view">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="listingsGrid"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 LocalConnect SA — All rights reserved</p>
+  </footer>
+
+  <script src="assets/localconnect.js"></script>
+  <script>
+    const CATEGORY_ICONS = {
+      'Barbers & Hair Salons': `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(0,173,239,0.6)" stroke-width="0.8" stroke-linecap="round"><path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"/><line x1="4" y1="3" x2="20" y2="3"/></svg>`,
+      'Mechanics & Auto Repair': `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(0,173,239,0.6)" stroke-width="0.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>`,
+      'Tutors & Education': `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(0,173,239,0.6)" stroke-width="0.8" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+      'Restaurants & Food': `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(0,173,239,0.6)" stroke-width="0.8" stroke-linecap="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>`,
+      'Plumbers & Electricians': `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(0,173,239,0.6)" stroke-width="0.8" stroke-linecap="round"><polyline points="13 2 13 9 20 9"/><path d="M20 14.5V6l-7-4H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h7"/><line x1="16" y1="19" x2="22" y2="19"/><line x1="19" y1="16" x2="19" y2="22"/></svg>`,
+      'Beauty & Wellness': `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(0,173,239,0.6)" stroke-width="0.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`
+    };
+
+    let BUSINESSES = [];
+    let currentView = 'grid';
+    const PAGE_SIZE = 9;
+    let currentPage = 1;
+    let filtered = [];
+
+    function starsHtml(rating) {
+      const full = Math.floor(rating);
+      const half = rating % 1 >= 0.5;
+      let s = '?'.repeat(full);
+      if (half) s += '?';
+      return s;
+    }
+
+    function setView(v) {
+      currentView = v;
+      const grid = document.getElementById('listingsGrid');
+      document.getElementById('gridBtn').classList.toggle('active', v === 'grid');
+      document.getElementById('listBtn').classList.toggle('active', v === 'list');
+      grid.classList.toggle('list-view', v === 'list');
+    }
+
+    function filterListings() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const catDrop = document.getElementById('categoryFilter').value;
+      const provDrop = document.getElementById('provinceFilter').value;
+      const minRat = parseFloat(document.querySelector('input[name="rating"]:checked').value);
+      const sort = document.getElementById('sortSelect').value;
+
+      const catChecks = [...document.querySelectorAll('.filter-card input[type="checkbox"]')]
+        .filter(el => el.checked && !['Gauteng','Western Cape','KwaZulu-Natal','Eastern Cape','Limpopo'].includes(el.value))
+        .map(el => el.value.replace('&amp;', '&'));
+      const provChecks = [...document.querySelectorAll('.filter-card input[type="checkbox"]')]
+        .filter(el => el.checked && ['Gauteng','Western Cape','KwaZulu-Natal','Eastern Cape','Limpopo'].includes(el.value))
+        .map(el => el.value);
+
+      filtered = BUSINESSES.filter(b => {
+        const tags = b.tags || [];
+        const matchQ = !q || b.name.toLowerCase().includes(q) || b.category.toLowerCase().includes(q) || b.city.toLowerCase().includes(q) || tags.some(t => t.toLowerCase().includes(q));
+        const matchCat = (!catDrop || b.category === catDrop) && (catChecks.length === 0 || catChecks.includes(b.category));
+        const matchProv = (!provDrop || b.province === provDrop) && (provChecks.length === 0 || provChecks.includes(b.province));
+        const matchRat = (b.rating || 0) >= minRat;
+        return matchQ && matchCat && matchProv && matchRat;
+      });
+
+      if (sort === 'rating') filtered.sort((a, b) => b.rating - a.rating);
+      if (sort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name));
+      if (sort === 'reviews') filtered.sort((a, b) => b.reviews - a.reviews);
+
+      currentPage = 1;
+      render();
+    }
+
+    function render() {
+      const grid = document.getElementById('listingsGrid');
+      const total = filtered.length;
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const page = filtered.slice(start, start + PAGE_SIZE);
+
+      document.getElementById('resultCount').textContent = `${total} result${total !== 1 ? 's' : ''}`;
+      document.getElementById('visibleCount').textContent = total;
+
+      if (total === 0) {
+        grid.innerHTML = `<div class="no-results"><h3>No businesses found</h3><p>Try adjusting your search or filters.</p></div>`;
+        document.getElementById('pagination').innerHTML = '';
+        return;
+      }
+
+      grid.innerHTML = page.map(b => `
+        <a class="biz-card" href="profile.html?id=${b.id}">
+          <div class="card-top ${b.coverImage ? 'has-image' : ''}"${b.coverImage ? ` style="background-image:url('${b.coverImage}')"` : ''}>
+            ${b.coverImage ? '' : (CATEGORY_ICONS[b.category] || '')}
+            ${b.featured ? '<span class="badge">Featured</span>' : ''}
+          </div>
+          <div class="card-body">
+            <p class="card-cat">${b.category}</p>
+            <h3 class="card-name">${b.name}</h3>
+            <p class="card-location">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${b.city}, ${b.province}
+            </p>
+            <div class="card-stars">
+              <span class="stars">${starsHtml(b.rating || 0)}</span>
+              <span class="rating-text">${(b.rating || 0).toFixed(1)} (${b.reviews} reviews)</span>
+            </div>
+            <div class="card-tags">${(b.tags || []).map(t => `<span class="tag">${t}</span>`).join('')}</div>
+          </div>
+          <div class="card-footer">
+            <span class="card-footer-text">${b.reviews} reviews</span>
+            <span class="btn-view">View Profile ?</span>
+          </div>
+        </a>`).join('');
+
+      const totalPages = Math.ceil(total / PAGE_SIZE);
+      let pag = '';
+      pag += `<button class="page-btn" onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>?</button>`;
+      for (let i = 1; i <= totalPages; i++) {
+        pag += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+      }
+      pag += `<button class="page-btn" onclick="goPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>?</button>`;
+      document.getElementById('pagination').innerHTML = pag;
+    }
+
+    function goPage(p) {
+      const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+      if (p < 1 || p > totalPages) return;
+      currentPage = p;
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function clearFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('categoryFilter').value = '';
+      document.getElementById('provinceFilter').value = '';
+      document.querySelector('input[name="rating"][value="0"]').checked = true;
+      document.querySelectorAll('.filter-card input[type="checkbox"]').forEach(el => el.checked = false);
+      filterListings();
+    }
+
+    function applyQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('q') || '';
+      const category = params.get('category') || '';
+      const province = params.get('province') || '';
+      if (q) document.getElementById('searchInput').value = q;
+      if (category) document.getElementById('categoryFilter').value = category;
+      if (province) document.getElementById('provinceFilter').value = province;
+    }
+
+    async function initPage() {
+      BUSINESSES = await LocalConnect.listBusinesses();
+      filtered = [...BUSINESSES];
+      applyQueryParams();
+      const session = await LocalConnect.fetchSession();
+      const navAuthLink = document.getElementById('navAuthLink');
+      if (session) {
+        navAuthLink.textContent = session.name.split(' ')[0];
+        navAuthLink.addEventListener('click', async e => {
+          e.preventDefault();
+          await LocalConnect.logout();
+          location.reload();
+        });
+      }
+      filterListings();
+    }
+
+    initPage();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register – LocalConnect SA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@200;300;400;500&family=Raleway:wght@100;200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cerulean: #00ADEF;
+      --cerulean-dark: #0089C4;
+      --cerulean-light: #33BEFF;
+      --cerulean-faint: rgba(0,173,239,0.07);
+      --black: #000000;
+      --white: #FFFFFF;
+      --gray-200: #E8E8E8;
+      --gray-500: #888888;
+      --error: #ff4d4d;
+      --success: #00c47a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      background: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,173,239,0.15);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.7rem;
+      letter-spacing: 4px;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--cerulean); }
+
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.72rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--cerulean); }
+    .nav-cta {
+      background: var(--cerulean) !important;
+      color: var(--black) !important;
+      padding: 7px 18px;
+      border-radius: 2px;
+      font-weight: 300 !important;
+    }
+
+    /* ── BACKGROUND ── */
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 50% 60% at 15% 30%, rgba(0,173,239,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 70%, rgba(0,173,239,0.05) 0%, transparent 60%),
+        var(--black);
+    }
+    .page-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 40px,
+        rgba(0,173,239,0.02) 40px,
+        rgba(0,173,239,0.02) 41px
+      );
+    }
+
+    /* ── MAIN ── */
+    main {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 24px 60px;
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 520px;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CARD ── */
+    .auth-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(0,173,239,0.18);
+      border-radius: 8px;
+      padding: 52px 48px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,173,239,0.06);
+    }
+
+    .auth-eyebrow {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.65rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--cerulean);
+      margin-bottom: 12px;
+    }
+
+    .auth-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 2.8rem;
+      letter-spacing: 3px;
+      line-height: 1;
+      color: var(--white);
+      margin-bottom: 8px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.15), 0 2px 20px rgba(0,173,239,0.1);
+    }
+
+    .auth-subtitle {
+      font-size: 0.82rem;
+      font-weight: 200;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.3px;
+      margin-bottom: 36px;
+    }
+
+    /* ── ROLE SELECTOR ── */
+    .role-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .role-tab {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      transition: background 0.2s, color 0.2s;
+    }
+    .role-tab.active { background: var(--cerulean); color: var(--black); }
+
+    /* Business fields panel */
+    #businessFields {
+      display: none;
+      animation: fadeUp 0.4s ease both;
+    }
+    #businessFields.show { display: block; }
+
+    /* ── FORM ── */
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+    .form-group:focus-within label { color: var(--cerulean); }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px;
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      font-size: 0.88rem;
+      letter-spacing: 0.5px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    select option { background: #111; color: var(--white); }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.6;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--cerulean);
+      background: rgba(0,173,239,0.04);
+      box-shadow: 0 0 0 3px rgba(0,173,239,0.08);
+    }
+
+    input.error-field, select.error-field, textarea.error-field {
+      border-color: var(--error) !important;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: rgba(255,255,255,0.2);
+      font-weight: 200;
+    }
+
+    .field-error {
+      font-size: 0.7rem;
+      font-weight: 200;
+      color: var(--error);
+      margin-top: 5px;
+      letter-spacing: 0.3px;
+      display: none;
+    }
+    .field-error.show { display: block; }
+
+    /* Password toggle */
+    .input-wrap { position: relative; }
+    .toggle-pw {
+      position: absolute;
+      right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      cursor: pointer;
+      color: rgba(255,255,255,0.3);
+      padding: 4px;
+      transition: color 0.2s;
+      display: flex; align-items: center;
+    }
+    .toggle-pw:hover { color: var(--cerulean); }
+
+    /* Password strength */
+    .pw-strength {
+      margin-top: 8px;
+      display: none;
+    }
+    .pw-strength.show { display: block; }
+    .strength-bar {
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+    .strength-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.3s, background 0.3s;
+      width: 0%;
+    }
+    .strength-label {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.62rem;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* Terms */
+    .terms-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .terms-wrap input[type="checkbox"] {
+      width: 14px; height: 14px;
+      margin-top: 2px;
+      accent-color: var(--cerulean);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .terms-wrap span {
+      font-size: 0.75rem;
+      font-weight: 200;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.6;
+      letter-spacing: 0.3px;
+    }
+    .terms-wrap a { color: var(--cerulean); text-decoration: none; }
+    .terms-wrap a:hover { opacity: 0.7; }
+
+    /* Divider */
+    .section-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+      margin: 24px 0;
+      position: relative;
+    }
+    .section-divider span {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #0a0a0a;
+      padding: 0 12px;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 200;
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+    }
+
+    /* Alert */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 3px;
+      font-size: 0.8rem;
+      font-weight: 300;
+      letter-spacing: 0.3px;
+      margin-bottom: 24px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    .alert.show { display: flex; }
+    .alert-error {
+      background: rgba(255,77,77,0.1);
+      border: 1px solid rgba(255,77,77,0.3);
+      color: #ff8080;
+    }
+    .alert-success {
+      background: rgba(0,196,122,0.1);
+      border: 1px solid rgba(0,196,122,0.3);
+      color: #00c47a;
+    }
+
+    /* Submit */
+    .btn-submit {
+      width: 100%;
+      padding: 15px;
+      background: var(--cerulean);
+      color: var(--black);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-submit:hover {
+      background: var(--cerulean-light);
+      box-shadow: 0 8px 24px rgba(0,173,239,0.3);
+      transform: translateY(-1px);
+    }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .spinner {
+      display: none;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: var(--black);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .btn-submit.loading .btn-text { display: none; }
+    .btn-submit.loading .spinner { display: block; }
+
+    .auth-switch {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.78rem;
+      font-weight: 200;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.3px;
+    }
+    .auth-switch a {
+      color: var(--cerulean);
+      text-decoration: none;
+      margin-left: 6px;
+      transition: opacity 0.2s;
+    }
+    .auth-switch a:hover { opacity: 0.7; }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 20px 48px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    footer p {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.2);
+    }
+
+    @media (max-width: 560px) {
+      .auth-card { padding: 36px 20px; }
+      .form-row-2 { grid-template-columns: 1fr; }
+      nav { padding: 0 20px; }
+      .nav-links { display: flex; gap: 14px; overflow-x: auto; max-width: calc(100vw - 155px); scrollbar-width: none; }
+      .nav-links::-webkit-scrollbar { display: none; }
+      .nav-links a { font-size: 0.63rem; letter-spacing: 1.6px; white-space: nowrap; }
+      .nav-logo { font-size: 1.3rem; letter-spacing: 2px; }
+      .nav-links { max-width: calc(100vw - 130px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-bg"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">Local<span>Connect</span> SA</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="Listings.html">Browse</a></li>
+      <li><a href="Listings.html">Categories</a></li>
+      <li><a href="login.html" class="nav-cta">Sign In</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="auth-container">
+      <div class="auth-card">
+
+        <p class="auth-eyebrow" id="registerEyebrow">Join the Community</p>
+        <h1 class="auth-title" id="registerTitle">Create Account</h1>
+        <p class="auth-subtitle">Free to join — discover or list local businesses</p>
+
+        <!-- Role selector -->
+        <div class="role-tabs">
+          <button class="role-tab active" data-role="customer" onclick="setRole(this)">Customer</button>
+          <button class="role-tab" data-role="business_owner" onclick="setRole(this)">Business Owner</button>
+        </div>
+
+        <!-- Alerts -->
+        <div class="alert alert-error" id="alertError">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="alertErrorMsg">Something went wrong.</span>
+        </div>
+        <div class="alert alert-success" id="alertSuccess">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="alertSuccessMsg">Account created! Redirecting…</span>
+        </div>
+
+        <form id="registerForm" novalidate>
+
+          <!-- Personal info -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" placeholder="Thabo"/>
+              <span class="field-error" id="firstNameError">Required.</span>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" placeholder="Nkosi"/>
+              <span class="field-error" id="lastNameError">Required.</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="you@example.com"/>
+            <span class="field-error" id="emailError">Enter a valid email address.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="+27 82 000 0000"/>
+            <span class="field-error" id="phoneError">Enter a valid phone number.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="province">Province</label>
+            <select id="province">
+              <option value="">— Select your province —</option>
+              <option>Gauteng</option>
+              <option>Western Cape</option>
+              <option>KwaZulu-Natal</option>
+              <option>Eastern Cape</option>
+              <option>Limpopo</option>
+              <option>Mpumalanga</option>
+              <option>North West</option>
+              <option>Free State</option>
+              <option>Northern Cape</option>
+            </select>
+            <span class="field-error" id="provinceError">Please select your province.</span>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrap">
+              <input type="password" id="password" placeholder="Min. 8 characters" autocomplete="new-password" oninput="checkStrength(this.value)"/>
+              <button type="button" class="toggle-pw" onclick="togglePw('password', this)" aria-label="Show password">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="pw-strength" id="pwStrength">
+              <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+              <span class="strength-label" id="strengthLabel">Strength: —</span>
+            </div>
+            <span class="field-error" id="passwordError">Password must be at least 8 characters.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <div class="input-wrap">
+              <input type="password" id="confirmPassword" placeholder="Repeat password" autocomplete="new-password"/>
+              <button type="button" class="toggle-pw" onclick="togglePw('confirmPassword', this)" aria-label="Show password">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <span class="field-error" id="confirmPasswordError">Passwords do not match.</span>
+          </div>
+
+          <!-- Business owner extra fields -->
+          <div id="businessFields">
+            <div class="section-divider"><span>Business Details</span></div>
+
+            <div class="form-group">
+              <label for="businessName">Business Name</label>
+              <input type="text" id="businessName" placeholder="e.g. Kingsmen Cuts"/>
+              <span class="field-error" id="businessNameError">Required for business owners.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="category">Business Category</label>
+              <select id="category">
+                <option value="">— Select category —</option>
+                <option>Barbers &amp; Hair Salons</option>
+                <option>Mechanics &amp; Auto Repair</option>
+                <option>Tutors &amp; Education</option>
+                <option>Restaurants &amp; Food</option>
+                <option>Plumbers &amp; Electricians</option>
+                <option>Beauty &amp; Wellness</option>
+                <option>Other</option>
+              </select>
+              <span class="field-error" id="categoryError">Please select a category.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="businessDesc">Short Description</label>
+              <textarea id="businessDesc" placeholder="Brief description of your business and services…"></textarea>
+            </div>
+          </div>
+
+          <!-- Terms -->
+          <div class="terms-wrap">
+            <input type="checkbox" id="terms"/>
+            <span>I agree to the <a href="Terms.html">Terms of Service</a> and <a href="Privacy.html">Privacy Policy</a> of LocalConnect SA.</span>
+          </div>
+          <span class="field-error" id="termsError" style="margin-top:-16px; margin-bottom:16px; display:none;">You must accept the terms to continue.</span>
+
+          <button type="submit" class="btn-submit" id="registerBtn">
+            <span class="btn-text" id="registerBtnText">Create My Account</span>
+            <div class="spinner"></div>
+          </button>
+
+        </form>
+
+        <div class="auth-switch">
+          Already have an account?
+          <a href="login.html">Sign in here</a>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 LocalConnect SA — All rights reserved</p>
+  </footer>
+
+  <script src="assets/localconnect.js"></script>
+  <script>
+    let selectedRole = 'customer';
+    const registerPageMode = {
+      role: 'customer',
+      intent: ''
+    };
+
+    (async function initPage() {
+      const session = await LocalConnect.fetchSession();
+      if (session) window.location.href = 'index.html';
+      applyPageModeFromQuery();
+    })();
+
+    function applyPageModeFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      registerPageMode.role = params.get('role') || 'customer';
+      registerPageMode.intent = params.get('intent') || '';
+      if (registerPageMode.role === 'business_owner') {
+        const ownerTab = document.querySelector('.role-tab[data-role="business_owner"]');
+        if (ownerTab) setRole(ownerTab);
+      }
+      updateRegisterCopy();
+    }
+
+    function updateRegisterCopy() {
+      const eyebrow = document.getElementById('registerEyebrow');
+      const title = document.getElementById('registerTitle');
+      const subtitle = document.querySelector('.auth-subtitle');
+      const buttonText = document.getElementById('registerBtnText');
+      const isListingMode = selectedRole === 'business_owner' || registerPageMode.intent === 'listing';
+      if (isListingMode) {
+        if (eyebrow) eyebrow.textContent = 'List Your Business';
+        if (title) title.textContent = 'Create Free Listing';
+        if (subtitle) subtitle.textContent = 'Set up your business owner account and publish your free listing.';
+        if (buttonText) buttonText.textContent = 'Create Free Listing';
+      } else {
+        if (eyebrow) eyebrow.textContent = 'Join the Community';
+        if (title) title.textContent = 'Create Account';
+        if (subtitle) subtitle.textContent = 'Free to join - discover or list local businesses';
+        if (buttonText) buttonText.textContent = 'Create My Account';
+      }
+    }
+
+    function setRole(btn) {
+      document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      selectedRole = btn.dataset.role;
+      const biz = document.getElementById('businessFields');
+      selectedRole === 'business_owner' ? biz.classList.add('show') : biz.classList.remove('show');
+      updateRegisterCopy();
+    }
+
+    function togglePw(id, btn) {
+      const input = document.getElementById(id);
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.innerHTML = show
+        ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+        : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    }
+
+    function checkStrength(pw) {
+      const wrap = document.getElementById('pwStrength');
+      const fill = document.getElementById('strengthFill');
+      const label = document.getElementById('strengthLabel');
+      if (!pw) { wrap.classList.remove('show'); return; }
+      wrap.classList.add('show');
+      let score = 0;
+      if (pw.length >= 8) score++;
+      if (pw.length >= 12) score++;
+      if (/[A-Z]/.test(pw)) score++;
+      if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      const levels = [
+        { pct: '20%', color: '#ff4d4d', text: 'Very Weak' },
+        { pct: '40%', color: '#ff8c42', text: 'Weak' },
+        { pct: '60%', color: '#f4c430', text: 'Fair' },
+        { pct: '80%', color: '#00ADEF', text: 'Strong' },
+        { pct: '100%', color: '#00c47a', text: 'Very Strong' }
+      ];
+      const lvl = levels[Math.min(score - 1, 4)] || levels[0];
+      fill.style.width = lvl.pct;
+      fill.style.background = lvl.color;
+      label.textContent = `Strength: ${lvl.text}`;
+      label.style.color = lvl.color;
+    }
+
+    function setErr(id, errId, show, msg) {
+      const el = document.getElementById(id);
+      const err = document.getElementById(errId);
+      if (msg && show) err.textContent = msg;
+      if (el) show ? el.classList.add('error-field') : el.classList.remove('error-field');
+      if (err) show ? err.classList.add('show') : err.classList.remove('show');
+    }
+
+    function showAlert(type, msg) {
+      const err = document.getElementById('alertError');
+      const ok = document.getElementById('alertSuccess');
+      err.classList.remove('show');
+      ok.classList.remove('show');
+      if (type === 'error') {
+        document.getElementById('alertErrorMsg').textContent = msg;
+        err.classList.add('show');
+      } else {
+        document.getElementById('alertSuccessMsg').textContent = msg;
+        ok.classList.add('show');
+      }
+    }
+
+    function validate() {
+      let ok = true;
+      const firstName = document.getElementById('firstName').value.trim();
+      setErr('firstName', 'firstNameError', !firstName);
+      if (!firstName) ok = false;
+      const lastName = document.getElementById('lastName').value.trim();
+      setErr('lastName', 'lastNameError', !lastName);
+      if (!lastName) ok = false;
+      const email = document.getElementById('email').value.trim();
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      setErr('email', 'emailError', !emailOk);
+      if (!emailOk) ok = false;
+      const phone = document.getElementById('phone').value.trim();
+      const phoneOk = /^[\d\s\+\-\(\)]{7,18}$/.test(phone);
+      setErr('phone', 'phoneError', !phoneOk);
+      if (!phoneOk) ok = false;
+      const province = document.getElementById('province').value;
+      setErr('province', 'provinceError', !province);
+      if (!province) ok = false;
+      const pw = document.getElementById('password').value;
+      const pwOk = pw.length >= 8;
+      setErr('password', 'passwordError', !pwOk);
+      if (!pwOk) ok = false;
+      const cpw = document.getElementById('confirmPassword').value;
+      const cpwOk = cpw === pw && cpw.length > 0;
+      setErr('confirmPassword', 'confirmPasswordError', !cpwOk);
+      if (!cpwOk) ok = false;
+      if (selectedRole === 'business_owner') {
+        const bn = document.getElementById('businessName').value.trim();
+        setErr('businessName', 'businessNameError', !bn);
+        if (!bn) ok = false;
+        const cat = document.getElementById('category').value;
+        setErr('category', 'categoryError', !cat);
+        if (!cat) ok = false;
+      }
+      const terms = document.getElementById('terms').checked;
+      const termsErr = document.getElementById('termsError');
+      if (!terms) { termsErr.classList.add('show'); ok = false; } else { termsErr.classList.remove('show'); }
+      return ok;
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      document.getElementById('alertError').classList.remove('show');
+      document.getElementById('alertSuccess').classList.remove('show');
+      if (!validate()) return;
+      const btn = document.getElementById('registerBtn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+      const payload = {
+        firstName: document.getElementById('firstName').value.trim(),
+        lastName: document.getElementById('lastName').value.trim(),
+        email: document.getElementById('email').value.trim().toLowerCase(),
+        phone: document.getElementById('phone').value.trim(),
+        province: document.getElementById('province').value,
+        password: document.getElementById('password').value,
+        role: selectedRole,
+        businessName: document.getElementById('businessName').value.trim(),
+        category: document.getElementById('category').value,
+        description: document.getElementById('businessDesc').value.trim()
+      };
+      setTimeout(async () => {
+        try {
+          const session = await LocalConnect.register(payload);
+          btn.classList.remove('loading');
+          btn.disabled = false;
+          showAlert('success', `Welcome to LocalConnect SA, ${session.firstName || payload.firstName}! Redirecting...`);
+          setTimeout(() => {
+            window.location.href = session.role === 'business_owner' ? 'Owner-Dashboard.html' : 'index.html';
+          }, 1400);
+        } catch (error) {
+          btn.classList.remove('loading');
+          btn.disabled = false;
+          showAlert('error', error.message || 'Unable to create the account right now.');
+        }
+      }, 500);
+    });
+
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+      el.addEventListener('input', () => {
+        el.classList.remove('error-field');
+        const errEl = document.getElementById(el.id + 'Error');
+        if (errEl) errEl.classList.remove('show');
+        document.getElementById('alertError').classList.remove('show');
+      });
+    });
+  </script>
+
+</body>
+</html>

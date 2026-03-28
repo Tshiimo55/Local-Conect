@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Business Dashboard – LocalConnect SA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@200;300;400;500&family=Raleway:wght@100;200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cerulean: #00ADEF; --cerulean-dark: #0089C4; --cerulean-light: #33BEFF;
+      --black: #000000; --white: #FFFFFF;
+      --surface: #0D0D0D; --surface-2: #141414; --surface-3: #1C1C1C;
+      --border: rgba(255,255,255,0.07);
+      --gray-400: #AAAAAA; --gray-500: #777777;
+      --success: #00c47a; --warning: #f4c430; --danger: #ff4d4d;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Montserrat', sans-serif; font-weight: 300; background: var(--surface); color: var(--white); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+    /* ── SIDEBAR ── */
+    .sidebar { width: 240px; flex-shrink: 0; background: var(--black); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transition: transform 0.3s; }
+    .sidebar-open .sidebar { transform: translateX(0); }
+    .sidebar-logo { padding: 28px 24px 24px; border-bottom: 1px solid var(--border); }
+    .sidebar-logo a { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 1.4rem; letter-spacing: 3px; color: var(--white); text-decoration: none; }
+    .sidebar-logo a span { color: var(--cerulean); }
+    .sidebar-logo p { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.58rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-top: 4px; }
+    .sidebar-nav { flex: 1; padding: 20px 0; overflow-y: auto; }
+    .nav-section-label { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.55rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.2); padding: 12px 24px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 24px; cursor: pointer; font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.78rem; letter-spacing: 1px; color: rgba(255,255,255,0.45); border-left: 2px solid transparent; transition: all 0.15s; text-decoration: none; }
+    .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.03); }
+    .nav-item.active { color: var(--cerulean); border-left-color: var(--cerulean); background: rgba(0,173,239,0.06); }
+    .sidebar-footer { padding: 20px 24px; border-top: 1px solid var(--border); }
+    .owner-badge { display: flex; align-items: center; gap: 10px; }
+    .owner-avatar { width: 32px; height: 32px; background: var(--cerulean); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 0.9rem; color: var(--black); flex-shrink: 0; }
+    .owner-info { flex: 1; overflow: hidden; }
+    .owner-name { font-size: 0.8rem; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .owner-role { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--cerulean); }
+    .btn-logout { background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.25); transition: color 0.2s; padding: 2px; }
+    .btn-logout:hover { color: var(--danger); }
+
+    /* ── MAIN ── */
+    .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--surface-2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 36px; position: sticky; top: 0; z-index: 40; }
+    .mobile-menu-btn { display: none; width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--white); cursor: pointer; align-items: center; justify-content: center; }
+    .topbar-title { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 1.4rem; letter-spacing: 3px; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .btn-sm { padding: 8px 20px; border-radius: 3px; border: none; cursor: pointer; font-family: 'Raleway', sans-serif; font-weight: 300; font-size: 0.68rem; letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.15s; }
+    .btn-primary { background: var(--cerulean); color: var(--black); }
+    .btn-primary:hover { background: var(--cerulean-light); box-shadow: 0 4px 16px rgba(0,173,239,0.25); }
+    .btn-ghost { background: transparent; color: rgba(255,255,255,0.5); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--white); border-color: rgba(255,255,255,0.2); }
+    .btn-danger-sm { background: rgba(255,77,77,0.12); color: var(--danger); border: 1px solid rgba(255,77,77,0.25); }
+    .btn-danger-sm:hover { background: rgba(255,77,77,0.22); }
+
+    .content { padding: 32px 36px; flex: 1; }
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeUp 0.35s ease; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── STAT CARDS ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 22px; position: relative; overflow: hidden; transition: border-color 0.2s; }
+    .stat-card:hover { border-color: rgba(0,173,239,0.25); }
+    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--cerulean); }
+    .stat-label { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.58rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 8px; }
+    .stat-value { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 2.2rem; letter-spacing: 2px; color: var(--white); text-shadow: 0 0 20px rgba(0,173,239,0.2); }
+    .stat-sub { font-size: 0.7rem; font-weight: 200; color: rgba(255,255,255,0.28); margin-top: 5px; }
+    .stat-trend { font-size: 0.68rem; font-weight: 300; margin-top: 3px; }
+    .stat-trend.up { color: var(--success); } .stat-trend.down { color: var(--danger); }
+
+    /* Cards */
+    .card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
+    .card-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .card-title { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 1.15rem; letter-spacing: 2px; }
+    .card-body { padding: 24px; }
+
+    /* Bar chart */
+    .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 90px; }
+    .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .bar { width: 100%; border-radius: 2px 2px 0 0; background: linear-gradient(to top, var(--cerulean-dark), var(--cerulean)); transition: opacity 0.2s; cursor: default; }
+    .bar:hover { opacity: 0.75; }
+    .bar-label { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.56rem; letter-spacing: 1px; color: rgba(255,255,255,0.28); }
+    .bar-val { font-size: 0.62rem; font-weight: 200; color: rgba(255,255,255,0.4); }
+
+    /* Reviews list */
+    .review-row { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .review-row:last-child { border-bottom: none; }
+    .review-avatar { width: 34px; height: 34px; background: rgba(0,173,239,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; color: var(--cerulean); flex-shrink: 0; }
+    .review-meta { flex: 1; }
+    .review-name { font-size: 0.82rem; font-weight: 400; margin-bottom: 2px; }
+    .review-stars { color: var(--cerulean); font-size: 0.72rem; }
+    .review-date { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.6rem; letter-spacing: 1px; color: rgba(255,255,255,0.25); margin-left: 8px; }
+    .review-text { font-size: 0.8rem; font-weight: 200; color: rgba(255,255,255,0.55); line-height: 1.6; margin-top: 4px; }
+
+    /* Form styles */
+    .form-section-title { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: var(--cerulean); margin-bottom: 18px; margin-top: 28px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .form-section-title:first-child { margin-top: 0; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group.full { grid-column: 1/-1; }
+    label { display: block; font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.62rem; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 7px; transition: color 0.2s; }
+    .form-group:focus-within label { color: var(--cerulean); }
+    input[type="text"], input[type="email"], input[type="tel"], input[type="url"], select, textarea {
+      width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 3px; color: var(--white); font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 0.85rem; outline: none; transition: border-color 0.2s, background 0.2s; letter-spacing: 0.3px; -webkit-appearance: none; appearance: none;
+    }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+    select option { background: #111; }
+    textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+    input:focus, select:focus, textarea:focus { border-color: var(--cerulean); background: rgba(0,173,239,0.04); box-shadow: 0 0 0 3px rgba(0,173,239,0.07); }
+    input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.18); }
+
+    /* Services editor */
+    .service-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .service-row { display: grid; grid-template-columns: 1fr 100px 36px; gap: 8px; align-items: center; }
+    .service-row input { margin: 0; }
+    .btn-icon { width: 36px; height: 36px; background: rgba(255,77,77,0.1); border: 1px solid rgba(255,77,77,0.2); border-radius: 3px; cursor: pointer; color: var(--danger); display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+    .btn-icon:hover { background: rgba(255,77,77,0.22); }
+    .btn-add-service { width: 100%; padding: 10px; background: transparent; border: 1px dashed var(--border); border-radius: 3px; cursor: pointer; font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3); transition: border-color 0.2s, color 0.2s; }
+    .btn-add-service:hover { border-color: var(--cerulean); color: var(--cerulean); }
+
+    /* Photos */
+    .photo-uploader { border: 1px dashed rgba(0,173,239,0.24); border-radius: 4px; padding: 16px; background: rgba(255,255,255,0.02); }
+    .photo-uploader p { font-size: 0.78rem; font-weight: 200; line-height: 1.7; color: rgba(255,255,255,0.45); margin-bottom: 12px; }
+    .photo-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .btn-photo { padding: 10px 16px; border-radius: 3px; border: 1px solid rgba(0,173,239,0.25); background: rgba(0,173,239,0.08); color: var(--cerulean); cursor: pointer; font-family: 'Raleway', sans-serif; font-size: 0.66rem; letter-spacing: 2px; text-transform: uppercase; }
+    .photo-count { font-size: 0.72rem; color: rgba(255,255,255,0.38); }
+    .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-top: 16px; }
+    .photo-card { position: relative; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 4px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+    .photo-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-remove { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border: none; border-radius: 50%; background: rgba(0,0,0,0.72); color: var(--white); cursor: pointer; font-size: 0.95rem; line-height: 1; }
+
+    /* Hours editor */
+    .hours-editor { display: flex; flex-direction: column; gap: 8px; }
+    .hours-row-edit { display: grid; grid-template-columns: 100px 1fr 1fr 80px; gap: 8px; align-items: center; }
+    .hours-day-label { font-size: 0.78rem; font-weight: 300; color: rgba(255,255,255,0.5); }
+    .toggle-switch { display: flex; align-items: center; justify-content: center; }
+    .toggle-switch input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--cerulean); cursor: pointer; }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; }
+    thead th { padding: 10px 14px; text-align: left; font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.58rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.28); border-bottom: 1px solid var(--border); }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    tbody td { padding: 12px 14px; font-size: 0.8rem; font-weight: 300; color: rgba(255,255,255,0.65); vertical-align: middle; }
+    .td-name { font-weight: 400; color: var(--white); }
+    .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 0.58rem; letter-spacing: 1.5px; text-transform: uppercase; }
+    .pill-active { background: rgba(0,196,122,0.12); color: var(--success); }
+    .pill-pending { background: rgba(244,196,48,0.12); color: var(--warning); }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 28px; right: 28px; z-index: 300; background: var(--surface-3); border: 1px solid rgba(0,173,239,0.25); border-radius: 4px; padding: 13px 20px; display: flex; align-items: center; gap: 10px; font-size: 0.8rem; font-weight: 300; box-shadow: 0 8px 32px rgba(0,0,0,0.4); transform: translateY(80px); opacity: 0; transition: transform 0.3s, opacity 0.3s; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cerulean); flex-shrink: 0; }
+    .sidebar-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 45; }
+    .sidebar-open .sidebar-backdrop { opacity: 1; pointer-events: auto; }
+    .overview-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .main { margin-left: 0; }
+      .mobile-menu-btn { display: inline-flex; }
+      .topbar { padding: 0 20px; gap: 12px; }
+      .topbar-right { gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+      .content { padding: 24px 20px 40px; }
+      .overview-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .hours-row-edit { grid-template-columns: 90px 1fr 1fr 36px; }
+    }
+    @media (max-width: 640px) {
+      .topbar-title { font-size: 1.15rem; letter-spacing: 2px; }
+      .topbar-right { width: 100%; }
+      .btn-sm { width: 100%; text-align: center; }
+      .service-row { grid-template-columns: 1fr; }
+      .hours-row-edit { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      .card-body { padding: 20px 16px; }
+      .toast { left: 20px; right: 20px; bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <a href="index.html">Local<span>Connect</span> SA</a>
+      <p>Business Dashboard</p>
+    </div>
+    <nav class="sidebar-nav">
+      <p class="nav-section-label">Dashboard</p>
+      <a class="nav-item active" onclick="showPanel('overview',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Overview
+      </a>
+      <a class="nav-item" onclick="showPanel('reviews',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Reviews
+      </a>
+      <p class="nav-section-label">My Business</p>
+      <a class="nav-item" onclick="showPanel('listing',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit Listing
+      </a>
+      <a class="nav-item" onclick="showPanel('services',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Services & Hours
+      </a>
+      <p class="nav-section-label">Account</p>
+      <a class="nav-item" href="account.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Account Settings
+      </a>
+      <a class="nav-item" href="index.html">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Back to Site
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="owner-badge">
+        <div class="owner-avatar" id="ownerAvatar">Z</div>
+        <div class="owner-info">
+          <div class="owner-name" id="ownerName">Business Owner</div>
+          <div class="owner-role">Business Owner</div>
+        </div>
+        <button class="btn-logout" onclick="logout()" title="Sign out">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Open dashboard menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="topbar-title" id="topbarTitle">Overview</span>
+      <div class="topbar-right">
+        <a class="btn-sm btn-ghost" id="viewProfileBtn" href="profile.html?id=7" target="_blank">View Public Profile →</a>
+        <button class="btn-sm btn-primary" onclick="showPanel('listing', document.querySelector('.nav-item:nth-child(5)'))">Edit Listing</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ── OVERVIEW ── -->
+      <div class="panel active" id="panel-overview">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <p class="stat-label">Profile Views</p>
+            <div class="stat-value">1 248</div>
+            <p class="stat-sub">Last 30 days</p>
+            <p class="stat-trend up">↑ 18% vs last month</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">Avg. Rating</p>
+            <div class="stat-value" id="ownerRating">4.9</div>
+            <p class="stat-sub">Based on all reviews</p>
+            <p class="stat-trend up">↑ 0.1 this month</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">Total Reviews</p>
+            <div class="stat-value" id="ownerRevCount">—</div>
+            <p class="stat-sub">Across all time</p>
+            <p class="stat-trend up">↑ 4 new this month</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">Contact Clicks</p>
+            <div class="stat-value">84</div>
+            <p class="stat-sub">Phone / email / web</p>
+            <p class="stat-trend up">↑ 9% vs last month</p>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Profile Views — Last 7 Days</span></div>
+            <div class="card-body">
+              <div class="bar-chart" id="viewsChart"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Recent Reviews</span></div>
+            <div class="card-body" style="padding:0 24px;">
+              <div id="recentReviewsList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:0">
+          <div class="card-header">
+            <span class="card-title">Listing Status</span>
+            <span class="pill pill-active">Active &amp; Verified</span>
+          </div>
+          <div class="card-body">
+            <table>
+              <thead><tr><th>Field</th><th>Value</th><th>Status</th></tr></thead>
+              <tbody id="listingStatusTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── REVIEWS ── -->
+      <div class="panel" id="panel-reviews">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">All Reviews</span>
+            <div style="display:flex;gap:8px;">
+              <select class="btn-ghost btn-sm" style="border:1px solid var(--border);padding:7px 28px 7px 12px;" onchange="filterOwnerReviews(this.value)">
+                <option value="">All Ratings</option>
+                <option value="5">★★★★★ 5 Star</option>
+                <option value="4">★★★★ 4 Star</option>
+                <option value="3">★★★ 3 Star</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body" style="padding:0 24px 8px;">
+            <div id="allReviewsList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── EDIT LISTING ── -->
+      <div class="panel" id="panel-listing">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Edit Business Listing</span>
+            <button class="btn-sm btn-primary" onclick="saveListing()">Save Changes</button>
+          </div>
+          <div class="card-body">
+            <p class="form-section-title">Basic Information</p>
+            <div class="form-grid">
+              <div class="form-group"><label>Business Name</label><input type="text" id="edit-name" value="Glam By Zanele"/></div>
+              <div class="form-group"><label>Category</label>
+                <select id="edit-cat">
+                  <option>Barbers &amp; Hair Salons</option><option>Mechanics &amp; Auto Repair</option>
+                  <option>Tutors &amp; Education</option><option>Restaurants &amp; Food</option>
+                  <option>Plumbers &amp; Electricians</option><option selected>Beauty &amp; Wellness</option>
+                </select>
+              </div>
+              <div class="form-group"><label>City / Town</label><input type="text" id="edit-city" value="Alexandra"/></div>
+              <div class="form-group"><label>Province</label>
+                <select id="edit-province">
+                  <option selected>Gauteng</option><option>Western Cape</option><option>KwaZulu-Natal</option>
+                  <option>Eastern Cape</option><option>Limpopo</option><option>Mpumalanga</option>
+                  <option>North West</option><option>Free State</option><option>Northern Cape</option>
+                </select>
+              </div>
+              <div class="form-group full"><label>Full Address</label><input type="text" id="edit-address" value="15 London Rd, Alexandra, 2090"/></div>
+              <div class="form-group full"><label>Description</label><textarea id="edit-desc">Glam By Zanele is Alexandra's go-to beauty studio for nails, lash extensions, makeup artistry, and brow shaping. Book online or call — walk-ins welcome on weekdays.</textarea></div>
+            </div>
+            <p class="form-section-title">Contact Details</p>
+            <div class="form-grid">
+              <div class="form-group"><label>Phone Number</label><input type="tel" id="edit-phone" value="+27 11 882 3340"/></div>
+              <div class="form-group"><label>Email Address</label><input type="email" id="edit-email" value="zanele@glam.co.za"/></div>
+              <div class="form-group full"><label>Website (optional)</label><input type="url" id="edit-website" value="https://glambyZanele.co.za"/></div>
+            </div>
+            <p class="form-section-title">Tags &amp; Keywords</p>
+            <div class="form-group">
+              <label>Tags (comma separated)</label>
+              <input type="text" id="edit-tags" value="Nails, Lash Extensions, Makeup, Brows, Waxing, Gel Nails"/>
+            </div>
+            <p class="form-section-title">Business Photos</p>
+            <div class="photo-uploader">
+              <p>Upload up to 6 photos to show customers your space, products, or work. Changes here publish to your public profile immediately.</p>
+              <div class="photo-actions">
+                <button type="button" class="btn-photo" onclick="document.getElementById('ownerPhotoInput').click()">Add Photos</button>
+                <span class="photo-count" id="ownerPhotoCount">0 / 6 uploaded</span>
+              </div>
+              <input type="file" id="ownerPhotoInput" accept="image/*" multiple hidden/>
+              <div class="photo-grid" id="ownerPhotoGrid"></div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:8px;">
+              <button class="btn-sm btn-primary" onclick="saveListing()">Save Changes</button>
+              <button class="btn-sm btn-ghost" onclick="showToast('Changes discarded')">Discard</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SERVICES & HOURS ── -->
+      <div class="panel" id="panel-services">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Services &amp; Pricing</span>
+            <button class="btn-sm btn-primary" onclick="saveServices()">Save</button>
+          </div>
+          <div class="card-body">
+            <div class="service-list" id="serviceList"></div>
+            <button class="btn-add-service" onclick="addService()">+ Add Service</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Trading Hours</span>
+            <button class="btn-sm btn-primary" onclick="saveHours()">Save</button>
+          </div>
+          <div class="card-body">
+            <div class="hours-editor" id="hoursEditor"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><div class="toast-dot"></div><span id="toastMsg">Saved.</span></div>
+
+  <script src="assets/localconnect.js"></script>
+  <script>
+    let session = null;
+    let business = null;
+    let services = [];
+    let hours = [];
+    let allReviews = [];
+    let deletingImageId = null;
+
+    (async function initPage() {
+      session = await LocalConnect.fetchSession();
+      if (!session || session.role !== 'business_owner') { window.location.href = 'login.html'; return; }
+      document.getElementById('ownerName').textContent = session.name;
+      document.getElementById('ownerAvatar').textContent = session.name.charAt(0).toUpperCase();
+      await refreshData();
+    })();
+
+    async function refreshData() {
+      business = await LocalConnect.getOwnerBusiness();
+      services = (business.services || []).map(s => ({ n: s.n, p: s.p }));
+      hours = (business.hours || []).map(h => ({ d: h.d, open: h.open, from: h.from, to: h.to }));
+      allReviews = await LocalConnect.listReviews(business.id);
+      document.getElementById('viewProfileBtn').href = `profile.html?id=${business.id}`;
+      fillListingForm();
+      initOverview();
+      filterOwnerReviews('');
+      renderServices();
+      renderHours();
+    }
+
+    async function logout() { await LocalConnect.logout(); window.location.href = 'login.html'; }
+
+    function fillListingForm() {
+      document.getElementById('edit-name').value = business.name || '';
+      document.getElementById('edit-cat').value = business.category || '';
+      document.getElementById('edit-city').value = business.city || '';
+      document.getElementById('edit-province').value = business.province || '';
+      document.getElementById('edit-address').value = business.address || '';
+      document.getElementById('edit-desc').value = business.description || '';
+      document.getElementById('edit-phone').value = business.phone || '';
+      document.getElementById('edit-email').value = business.email || '';
+      document.getElementById('edit-website').value = business.website || '';
+      document.getElementById('edit-tags').value = (business.tags || []).join(', ');
+      renderListingImages();
+    }
+
+    function renderListingImages() {
+      const images = business.images || [];
+      document.getElementById('ownerPhotoCount').textContent = `${images.length} / 6 uploaded`;
+      document.getElementById('ownerPhotoGrid').innerHTML = images.map(image => `
+        <div class="photo-card">
+          <img src="${image.url}" alt="Business photo"/>
+          <button type="button" class="photo-remove" onclick="removeListingImage(${image.id})">&times;</button>
+        </div>
+      `).join('') || '<p style="font-size:0.78rem;color:rgba(255,255,255,0.35);grid-column:1/-1;">No business photos uploaded yet.</p>';
+    }
+
+    function showPanel(id, el) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('panel-' + id).classList.add('active');
+      if (el) el.classList.add('active');
+      const titles = { overview:'Overview', reviews:'Reviews', listing:'Edit Listing', services:'Services & Hours' };
+      document.getElementById('topbarTitle').textContent = titles[id] || id;
+      closeSidebar();
+    }
+
+    function toggleSidebar() {
+      document.body.classList.toggle('sidebar-open');
+    }
+
+    function closeSidebar() {
+      document.body.classList.remove('sidebar-open');
+    }
+
+    function initOverview() {
+      document.getElementById('ownerRating').textContent = business.rating ? business.rating.toFixed(1) : '0.0';
+      document.getElementById('ownerRevCount').textContent = business.reviews || 0;
+      const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+      const vals = [42, 68, 55, 91, 74, 112, 53];
+      const maxV = Math.max(...vals);
+      document.getElementById('viewsChart').innerHTML = days.map((d, i) => `<div class="bar-wrap"><span class="bar-val">${vals[i]}</span><div class="bar" style="height:${Math.round((vals[i]/maxV)*75)}px" title="${vals[i]} views"></div><span class="bar-label">${d}</span></div>`).join('');
+      document.getElementById('recentReviewsList').innerHTML = allReviews.slice(0, 3).map(r => `<div class="review-row"><div class="review-avatar">${r.name.charAt(0)}</div><div class="review-meta"><div><span class="review-name">${r.name}</span><span class="review-stars"> ${'?'.repeat(r.rating)}</span><span class="review-date">${r.date}</span></div><div class="review-text">${r.text}</div></div></div>`).join('');
+      document.getElementById('listingStatusTable').innerHTML = [
+        ['Business Name', business.name || 'Not set', 'OK'],
+        ['Category', business.category || 'Not set', 'OK'],
+        ['Phone', business.phone || 'Not set', 'OK'],
+        ['Email', business.email || 'Not set', 'OK'],
+        ['Description', business.description ? 'Present' : 'Missing', business.description ? 'OK' : '!'],
+        ['Services Listed', `${services.length} services`, 'OK'],
+        ['Trading Hours', `${hours.length} days configured`, 'OK']
+      ].map(([f, v, s]) => `<tr><td>${f}</td><td class="td-name">${v}</td><td style="color:var(--success)">${s}</td></tr>`).join('');
+    }
+
+    function filterOwnerReviews(star) {
+      const filtered = allReviews.filter(r => !star || r.rating === parseInt(star, 10));
+      document.getElementById('allReviewsList').innerHTML = filtered.map(r => `<div class="review-row"><div class="review-avatar">${r.name.charAt(0)}</div><div class="review-meta"><div><span class="review-name">${r.name}</span><span class="review-stars"> ${'?'.repeat(r.rating)}</span><span class="review-date">${r.date}</span></div><div class="review-text">${r.text}</div></div></div>`).join('') || '<p style="padding:20px 0;font-size:0.8rem;color:rgba(255,255,255,0.3);">No reviews for this filter.</p>';
+    }
+
+    function renderServices() {
+      document.getElementById('serviceList').innerHTML = services.map((s, i) => `<div class="service-row"><input type="text" value="${s.n}" oninput="services[${i}].n=this.value" placeholder="Service name"/><input type="text" value="${s.p}" oninput="services[${i}].p=this.value" placeholder="Price"/><button class="btn-icon" onclick="removeService(${i})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`).join('');
+    }
+
+    function addService() { services.push({ n:'', p:'' }); renderServices(); }
+    function removeService(i) { services.splice(i, 1); renderServices(); }
+    async function saveServices() { await LocalConnect.updateOwnerServices(services); showToast('Services saved successfully'); await refreshData(); }
+
+    function renderHours() {
+      document.getElementById('hoursEditor').innerHTML = hours.map((h, i) => `<div class="hours-row-edit"><span class="hours-day-label">${h.d}</span><input type="text" value="${h.from}" placeholder="09:00" ${!h.open ? 'disabled' : ''} oninput="hours[${i}].from=this.value" style="${!h.open ? 'opacity:0.3' : ''}"/><input type="text" value="${h.to}" placeholder="18:00" ${!h.open ? 'disabled' : ''} oninput="hours[${i}].to=this.value" style="${!h.open ? 'opacity:0.3' : ''}"/><div class="toggle-switch" title="${h.open ? 'Open' : 'Closed - click to toggle'}"><input type="checkbox" ${h.open ? 'checked' : ''} onchange="toggleDay(${i},this.checked)"/></div></div>`).join('');
+    }
+
+    function toggleDay(i, val) { hours[i].open = val; renderHours(); }
+    async function saveHours() { await LocalConnect.updateOwnerHours(hours); showToast('Trading hours saved'); await refreshData(); }
+
+    async function saveListing() {
+      business = await LocalConnect.updateOwnerBusiness({
+        name: document.getElementById('edit-name').value,
+        category: document.getElementById('edit-cat').value,
+        city: document.getElementById('edit-city').value,
+        province: document.getElementById('edit-province').value,
+        address: document.getElementById('edit-address').value,
+        description: document.getElementById('edit-desc').value,
+        phone: document.getElementById('edit-phone').value,
+        email: document.getElementById('edit-email').value,
+        website: document.getElementById('edit-website').value,
+        tags: document.getElementById('edit-tags').value
+      });
+      showToast('Listing updated successfully');
+      await refreshData();
+    }
+
+    document.getElementById('ownerPhotoInput').addEventListener('change', async function(event) {
+      const files = Array.from(event.target.files || []);
+      if (!files.length) return;
+      if ((business.images || []).length >= 6) {
+        showToast('You can upload up to 6 photos');
+        event.target.value = '';
+        return;
+      }
+      try {
+        await LocalConnect.addOwnerBusinessImages(files.slice(0, 6 - (business.images || []).length));
+        showToast('Business photos uploaded');
+        await refreshData();
+      } catch (error) {
+        showToast(error.message || 'Unable to upload business photos right now.');
+      }
+      event.target.value = '';
+    });
+
+    async function removeListingImage(imageId) {
+      if (deletingImageId === imageId) return;
+      deletingImageId = imageId;
+      try {
+        await LocalConnect.deleteOwnerBusinessImage(imageId);
+        showToast('Photo removed');
+        await refreshData();
+      } catch (error) {
+        showToast(error.message || 'Unable to remove photo right now.');
+      } finally {
+        deletingImageId = null;
+      }
+    }
+
+    let tt;
+    function showToast(msg) {
+      document.getElementById('toastMsg').textContent = msg;
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      clearTimeout(tt);
+      tt = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+  </script>
+</body>
+</html>

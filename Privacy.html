@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy - LocalConnect SA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@200;300;400;500&family=Raleway:wght@100;200;300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --cerulean:#00ADEF; --cerulean-light:#33BEFF; --black:#000; --white:#fff; --surface:#0D0D0D; --surface-2:#141414; --border:rgba(255,255,255,0.08); }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Montserrat',sans-serif; font-weight:300; background:var(--surface); color:var(--white); min-height:100vh; }
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0 48px; height:68px; background:rgba(0,0,0,0.88); backdrop-filter:blur(12px); border-bottom:1px solid rgba(0,173,239,0.15); }
+    .nav-logo { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.7rem; letter-spacing:4px; color:var(--white); text-decoration:none; }
+    .nav-logo span { color:var(--cerulean); }
+    .nav-links { display:flex; gap:36px; list-style:none; }
+    .nav-links a { font-family:'Raleway',sans-serif; font-weight:200; font-size:0.72rem; letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,0.65); text-decoration:none; }
+    .nav-links a:hover { color:var(--cerulean); }
+    .nav-cta { background:var(--cerulean); color:var(--black)!important; padding:7px 18px; border-radius:2px; }
+    main { padding:120px 24px 64px; }
+    .hero { max-width:980px; margin:0 auto 28px; background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:48px; position:relative; overflow:hidden; }
+    .hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 70% 100% at 85% 20%, rgba(0,173,239,0.08) 0%, transparent 70%); }
+    .hero > * { position:relative; z-index:1; }
+    .eyebrow { font-family:'Raleway',sans-serif; font-size:0.65rem; letter-spacing:4px; text-transform:uppercase; color:var(--cerulean); margin-bottom:14px; }
+    h1 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(2.6rem,5vw,4rem); letter-spacing:4px; margin-bottom:12px; }
+    .intro { max-width:720px; line-height:1.9; color:rgba(255,255,255,0.7); }
+    .grid { max-width:980px; margin:0 auto; display:grid; grid-template-columns:1.4fr 1fr; gap:24px; }
+    .card { background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:32px; }
+    .card h2 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.6rem; letter-spacing:2px; margin-bottom:12px; }
+    .card p { line-height:1.9; color:rgba(255,255,255,0.68); }
+    ul { margin-top:14px; padding-left:18px; color:rgba(255,255,255,0.72); line-height:1.9; }
+    .actions { margin-top:22px; display:flex; gap:12px; flex-wrap:wrap; }
+    .btn { display:inline-block; padding:12px 22px; border-radius:3px; text-decoration:none; font-family:'Raleway',sans-serif; font-size:0.72rem; letter-spacing:2px; text-transform:uppercase; }
+    .btn-primary { background:var(--cerulean); color:var(--black); }
+    .btn-secondary { border:1px solid var(--border); color:rgba(255,255,255,0.68); }
+    @media (max-width: 820px) { nav { padding:0 20px; } .nav-links { display:flex; gap:14px; overflow-x:auto; max-width:calc(100vw - 155px); scrollbar-width:none; } .nav-links::-webkit-scrollbar { display:none; } .nav-links a { font-size:0.63rem; letter-spacing:1.6px; white-space:nowrap; } .hero { padding:32px 24px; } .grid { grid-template-columns:1fr; } }
+    @media (max-width: 560px) { .nav-logo { font-size:1.3rem; letter-spacing:2px; } .nav-links { max-width:calc(100vw - 130px); } .card { padding:24px 20px; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="Index.html" class="nav-logo">Local<span>Connect</span> SA</a>
+    <ul class="nav-links">
+      <li><a href="Index.html">Home</a></li>
+      <li><a href="Listings.html">Browse</a></li>
+      <li><a href="How-It-Works.html">How It Works</a></li>
+      <li><a href="About.html">About</a></li>
+      <li><a href="Contact.html">Contact</a></li>
+      <li><a href="Login.html" class="nav-cta">Sign In</a></li>
+    </ul>
+  </nav>
+  <main>
+    <section class="hero">
+      <div class="eyebrow">How information is handled</div>
+      <h1>Privacy Policy</h1>
+      <p class="intro">LocalConnect SA stores account information needed to manage profiles, authenticate users, and support reviews and business listings. Sensitive credentials are stored in the project database rather than browser-only mock storage.</p>
+    </section>
+    <section class="grid">
+      <div class="card">
+        <h2>Overview</h2>
+        <p>LocalConnect SA stores account information needed to manage profiles, authenticate users, and support reviews and business listings. Sensitive credentials are stored in the project database rather than browser-only mock storage.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="Create-Listing.html">Create Free Listing</a>
+          <a class="btn btn-secondary" href="Listings.html">Browse Businesses</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Key Points</h2>
+        <ul>
+          <li>Account details are used to sign users in and manage their profiles.</li><li>Business listing information is displayed publicly on profile pages.</li><li>You can request account deletion from the account page.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
