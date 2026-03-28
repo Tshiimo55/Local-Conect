@@ -12,10 +12,17 @@ from urllib.parse import parse_qs, urlparse
 
 
 BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR / "localconnect.db"
+DATA_DIR = Path(os.environ.get("LOCALCONNECT_DATA_DIR") or BASE_DIR)
+DB_PATH = DATA_DIR / "localconnect.db"
 UPLOADS_DIR = BASE_DIR / "uploads"
-HOST = "127.0.0.1"
-PORT = 8000
+HOST = os.environ.get("HOST", "127.0.0.1")
+PORT = int(os.environ.get("PORT", "8000"))
+FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "").strip()
+ALLOWED_ORIGINS = {
+    origin.strip()
+    for origin in os.environ.get("ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+}
 DEFAULT_RATING_DIST = [0, 0, 0, 0, 0]
 ALLOWED_IMAGE_MIME_TYPES = {
     "image/jpeg": ".jpg",
@@ -52,9 +59,24 @@ def verify_password(password: str, password_hash: str, password_salt: str) -> bo
 
 
 def get_db() -> sqlite3.Connection:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def allowed_origin(origin: str) -> str:
+    if not origin:
+        return ""
+    if origin in ALLOWED_ORIGINS:
+        return origin
+    if FRONTEND_ORIGIN and origin == FRONTEND_ORIGIN:
+        return origin
+    if HOST in {"127.0.0.1", "localhost"} and (
+        origin.startswith("http://127.0.0.1:") or origin.startswith("http://localhost:")
+    ):
+        return origin
+    return ""
 
 
 def format_display_date() -> str:
@@ -301,7 +323,7 @@ def business_detail_dict(conn: sqlite3.Connection, row: sqlite3.Row) -> dict:
 
 def seed_database():
     conn = get_db()
-    UPLOADS_DIR.mkdir(exist_ok=True)
+    UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
     conn.executescript(
         """
         CREATE TABLE IF NOT EXISTS users (
@@ -616,6 +638,15 @@ class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(BASE_DIR), **kwargs)
 
+    def end_headers(self):
+        origin = allowed_origin(self.headers.get("Origin", ""))
+        if origin:
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Vary", "Origin")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        super().end_headers()
+
     def _read_json(self):
         length = int(self.headers.get("Content-Length", "0") or "0")
         raw = self.rfile.read(length) if length else b"{}"
@@ -667,6 +698,16 @@ class Handler(SimpleHTTPRequestHandler):
 
         conn = get_db()
         try:
+            if parsed.path == "/api/health":
+                return self._send_json(
+                    200,
+                    {
+                        "ok": True,
+                        "service": "localconnect-backend",
+                        "frontendOrigin": FRONTEND_ORIGIN or "",
+                    },
+                )
+
             if parsed.path == "/api/session":
                 user = self._current_user(conn)
                 if not user:

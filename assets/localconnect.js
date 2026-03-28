@@ -1,6 +1,15 @@
 (function () {
   const SESSION_KEY = "lc_session";
-  const API_BASE = window.location.protocol === "file:" ? "http://127.0.0.1:8000" : "";
+  const API_BASE_KEY = "lc_api_base";
+  const configuredApiBase =
+    window.LOCALCONNECT_API_BASE ||
+    localStorage.getItem(API_BASE_KEY) ||
+    sessionStorage.getItem(API_BASE_KEY) ||
+    "";
+  const isStaticHost =
+    window.location.protocol === "file:" ||
+    window.location.hostname.endsWith(".github.io");
+  const API_BASE = configuredApiBase || (isStaticHost ? "http://127.0.0.1:8000" : "");
 
   function getStoredSession() {
     const raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
@@ -22,6 +31,19 @@
   function clearSession() {
     localStorage.removeItem(SESSION_KEY);
     sessionStorage.removeItem(SESSION_KEY);
+  }
+
+  function setApiBase(url, remember) {
+    const normalized = (url || "").trim().replace(/\/+$/, "");
+    if (!normalized) {
+      localStorage.removeItem(API_BASE_KEY);
+      sessionStorage.removeItem(API_BASE_KEY);
+      return;
+    }
+    const target = remember ? localStorage : sessionStorage;
+    const other = remember ? sessionStorage : localStorage;
+    other.removeItem(API_BASE_KEY);
+    target.setItem(API_BASE_KEY, normalized);
   }
 
   function fileToDataUrl(file) {
@@ -56,7 +78,9 @@
       response = await fetch(API_BASE + path, Object.assign({}, options, { headers: headers }));
     } catch (error) {
       const networkError = new Error(
-        "Cannot reach the LocalConnect server. Start `python server.py` in the project folder."
+        isStaticHost
+          ? "Cannot reach the LocalConnect backend. Start `python server.py` locally, or set `window.LOCALCONNECT_API_BASE` to your deployed API URL."
+          : "Cannot reach the LocalConnect server. Start `python server.py` in the project folder."
       );
       networkError.status = 0;
       throw networkError;
@@ -65,7 +89,11 @@
     const payload = isJson ? await response.json() : {};
 
     if (!response.ok) {
-      const error = new Error(payload.error || "Request failed.");
+      const defaultMessage =
+        isStaticHost && response.status === 404 && path.indexOf("/api/") === 0
+          ? "The frontend is live, but no backend API is available at this host. GitHub Pages only serves static files."
+          : "Request failed.";
+      const error = new Error(payload.error || defaultMessage);
       error.status = response.status;
       error.field = payload.field || "";
       throw error;
@@ -78,6 +106,10 @@
     getStoredSession: getStoredSession,
     saveSession: saveSession,
     clearSession: clearSession,
+    getApiBase: function () {
+      return API_BASE;
+    },
+    setApiBase: setApiBase,
     async fetchSession() {
       const session = getStoredSession();
       if (!session || !session.token) return null;
