@@ -24,8 +24,8 @@ This project now includes `render.yaml`, so you can deploy the backend as a Rend
 Set these environment variables in Render:
 
 - `HOST=0.0.0.0`
-- `FRONTEND_ORIGIN=https://tshiimo55.github.io/Local-Conect`
-- `ALLOWED_ORIGINS=https://tshiimo55.github.io/Local-Conect`
+- `FRONTEND_ORIGIN=https://tshiimo55.github.io`
+- `ALLOWED_ORIGINS=https://tshiimo55.github.io`
 
 After deploy, your backend URL will look like:
 

@@ -17,11 +17,21 @@ DB_PATH = DATA_DIR / "localconnect.db"
 UPLOADS_DIR = BASE_DIR / "uploads"
 HOST = os.environ.get("HOST", "127.0.0.1")
 PORT = int(os.environ.get("PORT", "8000"))
-FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "").strip()
+def normalize_origin(value: str) -> str:
+    raw = (value or "").strip()
+    if not raw:
+        return ""
+    parsed = urlparse(raw)
+    if parsed.scheme and parsed.netloc:
+        return f"{parsed.scheme}://{parsed.netloc}"
+    return raw.rstrip("/")
+
+
+FRONTEND_ORIGIN = normalize_origin(os.environ.get("FRONTEND_ORIGIN", ""))
 ALLOWED_ORIGINS = {
-    origin.strip()
+    normalize_origin(origin)
     for origin in os.environ.get("ALLOWED_ORIGINS", "").split(",")
-    if origin.strip()
+    if normalize_origin(origin)
 }
 DEFAULT_RATING_DIST = [0, 0, 0, 0, 0]
 ALLOWED_IMAGE_MIME_TYPES = {
@@ -66,16 +76,17 @@ def get_db() -> sqlite3.Connection:
 
 
 def allowed_origin(origin: str) -> str:
-    if not origin:
+    normalized = normalize_origin(origin)
+    if not normalized:
         return ""
-    if origin in ALLOWED_ORIGINS:
-        return origin
-    if FRONTEND_ORIGIN and origin == FRONTEND_ORIGIN:
-        return origin
+    if normalized in ALLOWED_ORIGINS:
+        return normalized
+    if FRONTEND_ORIGIN and normalized == FRONTEND_ORIGIN:
+        return normalized
     if HOST in {"127.0.0.1", "localhost"} and (
-        origin.startswith("http://127.0.0.1:") or origin.startswith("http://localhost:")
+        normalized.startswith("http://127.0.0.1:") or normalized.startswith("http://localhost:")
     ):
-        return origin
+        return normalized
     return ""
 
 
